@@ -71,3 +71,4 @@ PenaltyReturnTypeOnItsOwnLine: 10000
 FixNamespaceComments: true
 TabWidth: 4
 UseTab: Never
+IncludeBlocks: Regroup
