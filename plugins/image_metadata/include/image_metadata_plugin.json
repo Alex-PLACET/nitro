@@ -1,0 +1,12 @@
+{
+    "type": "NitroPluginsCollection",
+    "plugins": [
+        {
+            "name": "Image metadata",
+            "description": "Plugin to extract image metadata",
+            "id": "Image/Metadata",
+            "implements": [],
+            "type": "qtplugin"
+        }
+    ]
+}

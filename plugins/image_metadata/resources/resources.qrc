@@ -1,0 +1,5 @@
+<RCC>
+	<qresource prefix="/">
+		<file>./icons/nodes/todo-txt.svg</file>
+	</qresource>
+</RCC>

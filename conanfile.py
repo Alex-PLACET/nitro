@@ -6,6 +6,7 @@ class Nitro(ConanFile):
     generators = "VirtualRunEnv"
 
     def requirements(self):
+        self.requires("exiv2/0.28.0")
         self.requires("opencv/4.5.5")
         self.requires("zlib/1.3")
         self.requires("brotli/1.1.0", override=True)
