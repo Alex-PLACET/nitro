@@ -1,8 +1,7 @@
 #pragma once
 
-#include <nodes/nitronode.hpp>
-#include <nodes/nodeoperator.hpp>
-#include <opencv2/imgproc.hpp>
+#include <nitro/core/nodes/nitronode.hpp>
+#include <nitro/core/nodes/nodeoperator.hpp>
 
 namespace nitro::ImCore {
 

@@ -1,9 +1,12 @@
 #include "decompress.hpp"
+
 #include "nodes/restoration/resample.hpp"
-#include <grayimagedata.hpp>
+
+#include <nitro/datatypes/grayimagedata.hpp>
 #include <nodes/nitronodebuilder.hpp>
 #include <opencv2/imgproc.hpp>
 #include <util.hpp>
+
 
 namespace nitro::Thesis {
 

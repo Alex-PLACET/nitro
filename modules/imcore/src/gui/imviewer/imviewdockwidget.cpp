@@ -1,11 +1,12 @@
 #include "imviewdockwidget.hpp"
+
 #include "imageviewer.hpp"
 #include "src/gui/histogram/histogramviewer.hpp"
 
 #include <QHBoxLayout>
 #include <QTabBar>
-#include <gui/mainwindow.hpp>
-#include <gui/zoombar.hpp>
+#include <nitro/gui/components/zoombar.hpp>
+#include <nitro/gui/nodeeditor/mainwindow.hpp>
 
 namespace nitro::ImCore {
 

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "gui/nitrodockwidget.hpp"
+#include "nitro/gui/nodeeditor/nitrodockwidget.hpp"
+
 #include <QDockWidget>
 #include <QLabel>
 #include <QStatusBar>

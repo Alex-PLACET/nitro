@@ -1,9 +1,10 @@
 #include "quantize.hpp"
-#include <colimagedata.hpp>
-#include <nodes/nitronodebuilder.hpp>
-#include <util.hpp>
 
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/datatypes/colimagedata.hpp>
+#include <nitro/util/util.hpp>
 #include <opencv2/imgproc.hpp>
+
 
 namespace nitro::ImProc {
 

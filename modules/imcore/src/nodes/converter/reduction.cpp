@@ -1,10 +1,11 @@
 #include "reduction.hpp"
-#include "include/colimagedata.hpp"
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/datatypes/integerdata.hpp>
-#include <nodes/nitronodebuilder.hpp>
-#include <util.hpp>
 
+#include "nitro/datatypes/colimagedata.hpp"
+
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/datatypes/integerdata.hpp>
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/util/util.hpp>
 #include <opencv2/imgproc.hpp>
 #include <unordered_set>
 

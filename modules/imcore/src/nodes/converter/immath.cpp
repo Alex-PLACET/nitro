@@ -1,10 +1,11 @@
 #include "immath.hpp"
-#include "include/colimagedata.hpp"
-#include "include/grayimagedata.hpp"
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/nitronodebuilder.hpp>
-#include <util.hpp>
 
+#include "nitro/datatypes/colimagedata.hpp"
+#include "nitro/datatypes/grayimagedata.hpp"
+
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/util/util.hpp>
 #include <opencv2/imgproc.hpp>
 
 namespace nitro::ImCore {

@@ -1,18 +1,8 @@
-#include "imcore.hpp"
+#include "nitro/modules/imcore.hpp"
 
-#include "include/colimagedata.hpp"
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/datatypes/integerdata.hpp>
-
-#include "gui/histogram/histogramdockwidget.hpp"
-#include "gui/histogram/histogramviewer.hpp"
-#include "gui/imviewer/imageviewer.hpp"
-#include "gui/imviewer/imviewdockwidget.hpp"
-
-#include <gui/mainwindow.hpp>
-#include <nodes/noderegistry.hpp>
-
-#include "include/grayimagedata.hpp"
+#include "nitro/core/modules/nitromodule.hpp"
+#include "nitro/datatypes/colimagedata.hpp"
+#include "nitro/datatypes/grayimagedata.hpp"
 #include "nodes/color/colormap.hpp"
 #include "nodes/color/colorspaceconvert.hpp"
 #include "nodes/color/immix.hpp"
@@ -39,18 +29,21 @@
 #include "src/nodes/transform/imresize.hpp"
 #include "src/nodes/transform/imrotate.hpp"
 
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/datatypes/integerdata.hpp>
+#include <nitro/core/nodes/noderegistry.hpp>
+#include <nitro/gui/nodeeditor/mainwindow.hpp>
 
 namespace nitro::ImCore {
 
-ImCore::ImCore() {}
-
-void ImCore::registerNodes(std::shared_ptr<NodeRegistry> &registry, MainWindow *window) {
-    window_ = window;
-    registerInputNodes(registry);
-    registerOutputNodes(registry);
-    registerConvertNodes(registry);
-    registerColorNodes(registry);
-    registerTransformNodes(registry);
+std::vector<CreatorVariant> ImCore::registerNodes() {
+    std::vector<CreatorVariant> node_creators;
+    registerInputNodes(node_creators);
+    registerOutputNodes(node_creators);
+    registerConvertNodes(node_creators);
+    registerColorNodes(node_creators);
+    registerTransformNodes(node_creators);
+    return node_creators;
 }
 
 void ImCore::registerDataTypes() {
@@ -60,45 +53,45 @@ void ImCore::registerDataTypes() {
     IntegerData::registerConversions();
 }
 
-void ImCore::registerConvertNodes(std::shared_ptr<NodeRegistry> &registry) {
+void ImCore::registerConvertNodes(std::vector<CreatorVariant> &node_creators) {
     const QString category = "Converter";
-    registry->registerNode(ImInfoOperator::creator(category)); // TODO: place elsewhere?
-    registry->registerNode(MathOperator::creator(category));
-    registry->registerNode(BooleanMathOperator::creator(category));
-    registry->registerNode(ReductionOperator::creator(category));
-    registry->registerNode(MapRangeOperator::creator(category));
-    registry->registerNode(NormalizeOperator::creator(category));
-    registry->registerNode(InvertOperator::creator(category));
-    registry->registerNode(RgbToGrayscaleOperator::creator(category));
-    registry->registerNode(SeparateOperator::creator(category));
-    registry->registerNode(CombineOperator::creator(category));
+    node_creators.emplace_back(ImInfoOperator::creator(category)); // TODO: place elsewhere?
+    node_creators.emplace_back(MathOperator::creator(category));
+    node_creators.emplace_back(BooleanMathOperator::creator(category));
+    node_creators.emplace_back(ReductionOperator::creator(category));
+    node_creators.emplace_back(MapRangeOperator::creator(category));
+    node_creators.emplace_back(NormalizeOperator::creator(category));
+    node_creators.emplace_back(InvertOperator::creator(category));
+    node_creators.emplace_back(RgbToGrayscaleOperator::creator(category));
+    node_creators.emplace_back(SeparateOperator::creator(category));
+    node_creators.emplace_back(CombineOperator::creator(category));
 }
 
-void ImCore::registerTransformNodes(std::shared_ptr<NodeRegistry> &registry) {
+void ImCore::registerTransformNodes(std::vector<CreatorVariant> &node_creators) {
     const QString category = "Transform";
-    registry->registerNode(ResizeOperator::creator(category));
-    registry->registerNode(ImFlipOperator::creator(category));
-    registry->registerNode(ImRotateOperator::creator(category));
-    registry->registerNode(TranslateOperator::creator(category));
-    registry->registerNode(MatchSizeOperator::creator(category));
+    node_creators.emplace_back(ResizeOperator::creator(category));
+    node_creators.emplace_back(ImFlipOperator::creator(category));
+    node_creators.emplace_back(ImRotateOperator::creator(category));
+    node_creators.emplace_back(TranslateOperator::creator(category));
+    node_creators.emplace_back(MatchSizeOperator::creator(category));
 }
 
-void ImCore::registerColorNodes(std::shared_ptr<NodeRegistry> &registry) {
+void ImCore::registerColorNodes(std::vector<CreatorVariant> &node_creators) {
     const QString category = "Color";
-    registry->registerNode(MixOperator::creator(category));
-    registry->registerNode(ConvertOperator::creator(category));
-    registry->registerNode(UniformConvertOperator::creator(category));
-    registry->registerNode(ColorMapOperator::creator(category));
+    node_creators.emplace_back(MixOperator::creator(category));
+    node_creators.emplace_back(ConvertOperator::creator(category));
+    node_creators.emplace_back(UniformConvertOperator::creator(category));
+    node_creators.emplace_back(ColorMapOperator::creator(category));
 }
 
-void ImCore::registerInputNodes(std::shared_ptr<NodeRegistry> &registry) {
+void ImCore::registerInputNodes(std::vector<CreatorVariant> &node_creators) {
     const QString category = "Input";
 
     // ------ Image Source Node ------
-    registry->registerNode(ImageSourceOperator::creator(category));
+    node_creators.emplace_back(ImageSourceOperator::creator(category));
 
     // ------ Decimal Source Node ------
-    registry->registerNode([category]() {
+    node_creators.emplace_back([category]() {
         NitroNodeBuilder builder("Value", "ValueSource", category);
         return builder.withSourcedOutputValue("Value", 0, 0, 1, BoundMode::UNCHECKED)
                 ->withIcon("number.png")
@@ -107,22 +100,26 @@ void ImCore::registerInputNodes(std::shared_ptr<NodeRegistry> &registry) {
     });
 
     // ------ Integer Source Node ------
-    registry->registerNode([category]() {
+    node_creators.emplace_back([category]() {
         NitroNodeBuilder builder("Integer", "IntegerSource", category);
         return builder.withSourcedOutputInteger("Integer", 128, 0, 255, BoundMode::UNCHECKED)
                 ->withIcon("number.png")
                 ->withNodeColor(NITRO_INPUT_COLOR)
                 ->build();
     });
-    registry->registerNode(RandomOperator::creator(category));
-    registry->registerNode(RgbOperator::creator(category));
+    node_creators.emplace_back(RandomOperator::creator(category));
+    node_creators.emplace_back(RgbOperator::creator(category));
 }
 
-void ImCore::registerOutputNodes(std::shared_ptr<NodeRegistry> &registry) {
+void ImCore::registerOutputNodes(std::vector<CreatorVariant> &node_creators) {
     const QString category = "Output";
-    registry->registerNode(ImageViewOperator::creator(category, window_));
-    registry->registerNode(ValueViewOperator::creator(category));
-    registry->registerNode(HistogramViewOperator::creator(category, window_));
+    node_creators.emplace_back([category](MainWindow *window) {
+        return ImageViewOperator::creator(category, window);
+    });
+    node_creators.emplace_back(ValueViewOperator::creator(category));
+    node_creators.emplace_back([category](MainWindow *window) {
+        return HistogramViewOperator::creator(category, window);
+    });
 }
 
 } // namespace nitro::ImCore

@@ -1,5 +1,4 @@
 #include "imageviewer.hpp"
-#include <util.hpp>
 
 #include <QApplication>
 #include <QColorSpace>
@@ -15,22 +14,19 @@
 #include <QTimer>
 #include <QtAlgorithms>
 #include <cmath>
+#include <nitro/util/util.hpp>
+
 
 namespace nitro::ImCore {
 
 ImageViewer::ImageViewer(QGraphicsScene *imScene, QWidget *parent) : QGraphicsView(parent) {
-
     setDragMode(QGraphicsView::ScrollHandDrag);
     setRenderHint(QPainter::Antialiasing);
     setResizeAnchor(QGraphicsView::transformationAnchor());
-
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
     setScaleRange(minScaleFactor, maxScaleFactor);
 
     // Sets the scene rect to its maximum possible ranges to avoid auto scene range
@@ -101,8 +97,8 @@ void ImageViewer::drawBackground(QPainter *painter, const QRectF &r) {
     double bottom = std::floor(tl.y() / gridStep_ - 0.5);
     double top = std::floor(br.y() / gridStep_ + 1.0);
 
-    for (int xi = int(left); xi <= int(right); ++xi) {
-        for (int yi = int(bottom); yi <= int(top); ++yi) {
+    for (int xi = static_cast<int>(left); xi <= static_cast<int>(right); ++xi) {
+        for (int yi = static_cast<int>(bottom); yi <= static_cast<int>(top); ++yi) {
             painter->drawEllipse(xi * gridStep_, yi * gridStep_, dotSize_, dotSize_);
         }
     }

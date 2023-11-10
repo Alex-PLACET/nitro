@@ -1,8 +1,9 @@
 #include "rgbtobw.hpp"
-#include "include/colimagedata.hpp"
-#include "include/grayimagedata.hpp"
-#include <nodes/nitronodebuilder.hpp>
 
+#include "nitro/datatypes/colimagedata.hpp"
+#include "nitro/datatypes/grayimagedata.hpp"
+
+#include <nitro/core/nodes/nitronodebuilder.hpp>
 #include <opencv2/imgproc.hpp>
 
 namespace nitro::ImCore {

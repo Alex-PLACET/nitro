@@ -1,7 +1,8 @@
 #include "histogramdockwidget.hpp"
+
 #include "histogramviewer.hpp"
 
-#include <gui/mainwindow.hpp>
+#include <nitro/gui/nodeeditor/mainwindow.hpp>
 
 namespace nitro::ImCore {
 

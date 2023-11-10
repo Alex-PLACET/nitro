@@ -1,0 +1,23 @@
+#pragma once
+
+#include <memory>
+#include <nitro/core/modules/nitromodule.hpp>
+#include <vector>
+
+// clang-format off
+// Include module headers
+@MODULE_INCLUDES@
+
+namespace nitro {
+
+    // Initialize modules
+    inline std::vector<std::unique_ptr<NitroModule>> initModules() {
+        std::vector<std::unique_ptr<NitroModule>> modules;
+        // Add module initialization code
+        @MODULE_APPENDS@
+        return modules;
+    }
+
+} // namespace nitro
+
+// clang-format on

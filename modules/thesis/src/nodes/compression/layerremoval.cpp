@@ -1,10 +1,11 @@
 #include "layerremoval.hpp"
-#include <grayimagedata.hpp>
+
+#include <QDebug>
+#include <nitro/datatypes/grayimagedata.hpp>
 #include <nodes/nitronodebuilder.hpp>
 #include <opencv2/imgproc.hpp>
 #include <util.hpp>
 
-#include <QDebug>
 
 namespace nitro::Thesis {
 

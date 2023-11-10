@@ -1,12 +1,14 @@
 #include "flip.hpp"
+
 #include "FLIP.h"
 #include "color.h"
-#include <colimagedata.hpp>
-#include <grayimagedata.hpp>
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/nitronodebuilder.hpp>
 
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/datatypes/colimagedata.hpp>
+#include <nitro/datatypes/grayimagedata.hpp>
 #include <opencv2/imgproc.hpp>
+
 
 namespace nitro::ImProc {
 
@@ -97,10 +99,8 @@ void FlipOperator::execute(NodePorts &nodePorts) {
     int resX = nodePorts.inputInteger(INPUT_RES);
     double dist = nodePorts.inputValue(INPUT_DIST);
 
-    FLIP::image<FLIP::color3> fImgA = im1->channels() == 1 ? cvGrayscaleMatToFlipImg(*im1)
-                                                           : cvMatToFlipImg(*im1);
-    FLIP::image<FLIP::color3> fImgB = im2->channels() == 1 ? cvGrayscaleMatToFlipImg(*im2)
-                                                           : cvMatToFlipImg(*im2);
+    FLIP::image<FLIP::color3> fImgA = cvGrayscaleMatToFlipImg(*im1);
+    FLIP::image<FLIP::color3> fImgB = cvGrayscaleMatToFlipImg(*im2);
     int width = im1->cols;
     int height = im1->rows;
 

@@ -1,8 +1,9 @@
 #include "imresize.hpp"
-#include "include/colimagedata.hpp"
-#include <nodes/nitronodebuilder.hpp>
-#include <util.hpp>
 
+#include "nitro/datatypes/colimagedata.hpp"
+
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/util/util.hpp>
 #include <opencv2/imgproc.hpp>
 
 namespace nitro::ImCore {

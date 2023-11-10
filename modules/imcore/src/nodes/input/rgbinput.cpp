@@ -1,8 +1,9 @@
 #include "rgbinput.hpp"
-#include "include/colimagedata.hpp"
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/nitronodebuilder.hpp>
 
+#include "nitro/datatypes/colimagedata.hpp"
+
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/nitronodebuilder.hpp>
 #include <opencv2/imgproc.hpp>
 #include <random>
 

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <nodes/nitronode.hpp>
-#include <nodes/nodeoperator.hpp>
+#include <nitro/core/nodes/nitronode.hpp>
+#include <nitro/core/nodes/nodeoperator.hpp>
+#include <opencv2/core/mat.hpp>
 
 namespace nitro::ImCore {
 
@@ -15,7 +16,6 @@ public:
 
 private:
     QLabel *displayLabel_;
-
     cv::Mat displayImage_;
 };
 

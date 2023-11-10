@@ -1,8 +1,10 @@
 #include "invert.hpp"
-#include "include/colimagedata.hpp"
-#include <nodes/nitronodebuilder.hpp>
 
+#include "nitro/datatypes/colimagedata.hpp"
+
+#include <nitro/core/nodes/nitronodebuilder.hpp>
 #include <opencv2/imgproc.hpp>
+
 
 namespace nitro::ImCore {
 

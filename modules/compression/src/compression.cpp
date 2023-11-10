@@ -1,25 +1,27 @@
-#include "compression.hpp"
+#include "nitro/modules/compression.hpp"
 
 #include "nodes/compression/jpegoperator.hpp"
 #include "nodes/compression/pngoperator.hpp"
 #include "nodes/compression/zliboperator.hpp"
-#include <gui/mainwindow.hpp>
-#include <nodes/noderegistry.hpp>
+
+#include <nitro/core/nodes/noderegistry.hpp>
+#include <nitro/gui/nodeeditor/mainwindow.hpp>
 
 namespace nitro::Compression {
 
 Compression::Compression() = default;
 
-void Compression::registerNodes(std::shared_ptr<NodeRegistry> &registry, MainWindow *window) {
-    Q_UNUSED(window);
-    registerCompressionNodes(registry);
+std::vector<CreatorVariant> Compression::registerNodes() {
+    std::vector<CreatorVariant> node_creators;
+    registerCompressionNodes(node_creators);
+    return node_creators;
 }
 
-void Compression::registerCompressionNodes(std::shared_ptr<NodeRegistry> &registry) {
+void Compression::registerCompressionNodes(std::vector<CreatorVariant> &node_creators) const {
     const QString category = "Compression";
-    registry->registerNode(ZLibOperator::creator(category));
-    registry->registerNode(PngOperator::creator(category));
-    registry->registerNode(JpegOperator::creator(category));
+    node_creators.emplace_back(ZLibOperator::creator(category));
+    node_creators.emplace_back(PngOperator::creator(category));
+    node_creators.emplace_back(JpegOperator::creator(category));
 }
 
 } // namespace nitro::Compression

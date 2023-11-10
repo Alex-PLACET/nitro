@@ -1,8 +1,8 @@
 #include "jpegoperator.hpp"
-#include <grayimagedata.hpp>
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/nitronodebuilder.hpp>
 
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/datatypes/grayimagedata.hpp>
 #include <opencv2/imgcodecs.hpp>
 
 namespace nitro::Compression {

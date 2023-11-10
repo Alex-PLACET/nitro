@@ -1,7 +1,7 @@
 #include "boxfilter.hpp"
-#include <colimagedata.hpp>
-#include <nodes/nitronodebuilder.hpp>
 
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/datatypes/colimagedata.hpp>
 #include <opencv2/imgproc.hpp>
 
 namespace nitro::ImProc {

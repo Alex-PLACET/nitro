@@ -1,10 +1,11 @@
 #pragma once
 
 #include "gui/imviewer/imageviewer.hpp"
-#include "gui/mainwindow.hpp"
+#include "nitro/gui/nodeeditor/mainwindow.hpp"
 #include "src/gui/histogram/histogramviewer.hpp"
-#include <nodes/nitronode.hpp>
-#include <nodes/nodeoperator.hpp>
+
+#include <nitro/core/nodes/nitronode.hpp>
+#include <nitro/core/nodes/nodeoperator.hpp>
 
 namespace nitro::ImCore {
 

@@ -1,7 +1,9 @@
-#include "include/colimagedata.hpp"
-#include "include/grayimagedata.hpp"
-#include <nodes/datatypes/decimaldata.hpp>
-#include <nodes/datatypes/integerdata.hpp>
+#include "nitro/datatypes/colimagedata.hpp"
+
+#include "nitro/datatypes/grayimagedata.hpp"
+
+#include <nitro/core/nodes/datatypes/decimaldata.hpp>
+#include <nitro/core/nodes/datatypes/integerdata.hpp>
 
 namespace nitro {
 

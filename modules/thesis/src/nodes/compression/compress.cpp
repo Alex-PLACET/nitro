@@ -1,10 +1,12 @@
 #include "compress.hpp"
 // TODO: split up the node functionality better
 #include "../../../../improc/src/nodes/quantization/kmeans.hpp"
-#include <grayimagedata.hpp>
+
+#include <nitro/datatypes/grayimagedata.hpp>
 #include <nodes/nitronodebuilder.hpp>
 #include <opencv2/imgproc.hpp>
 #include <util.hpp>
+
 
 namespace nitro::Thesis {
 

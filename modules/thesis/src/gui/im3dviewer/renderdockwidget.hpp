@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gui/nitrodockwidget.hpp"
+#include "gui/nodeeditor/nitrodockwidget.hpp"
 
 namespace nitro {
 

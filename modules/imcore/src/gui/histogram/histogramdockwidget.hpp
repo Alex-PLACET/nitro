@@ -1,8 +1,10 @@
 #pragma once
 
-#include "gui/nitrodockwidget.hpp"
+#include "nitro/gui/nodeeditor/nitrodockwidget.hpp"
+
 #include <QLabel>
 #include <QStatusBar>
+
 
 namespace nitro {
 class MainWindow;

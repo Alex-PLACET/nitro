@@ -1,8 +1,11 @@
 #include "surfaceviewoperator.hpp"
+
 #include "gui/im3dviewer/renderdockwidget.hpp"
-#include <colimagedata.hpp>
+
+#include <nitro/datatypes/colimagedata.hpp>
 #include <nodes/nitronodebuilder.hpp>
 #include <util.hpp>
+
 
 namespace nitro::Thesis {
 

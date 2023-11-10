@@ -2,8 +2,9 @@
 
 #include "gui/im3dviewer/renderview.hpp"
 #include "gui/mainwindow.hpp"
-#include <nodes/nitronode.hpp>
-#include <nodes/nodeoperator.hpp>
+
+#include <nitro/core/nodes/nitronode.hpp>
+#include <nitro/core/nodes/nodeoperator.hpp>
 
 namespace nitro::Thesis {
 

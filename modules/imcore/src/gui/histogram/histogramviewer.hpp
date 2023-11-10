@@ -1,10 +1,10 @@
 #pragma once
 
-#include "gui/imviewer/imageviewer.hpp"
 #include <QChartView>
-#include <QLineSeries>
 #include <QValueAxis>
 #include <QWidget>
+#include <opencv2/core/mat.hpp>
+
 
 namespace nitro::ImCore {
 

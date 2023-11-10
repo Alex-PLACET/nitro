@@ -1,7 +1,7 @@
 #include "fouriertransform.hpp"
-#include <grayimagedata.hpp>
-#include <nodes/nitronodebuilder.hpp>
 
+#include <nitro/core/nodes/nitronodebuilder.hpp>
+#include <nitro/datatypes/grayimagedata.hpp>
 #include <opencv2/imgproc.hpp>
 
 namespace nitro::ImProc {

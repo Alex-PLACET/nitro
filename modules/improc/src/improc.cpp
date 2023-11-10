@@ -1,4 +1,4 @@
-#include "improc.hpp"
+#include "nitro/modules/improc.hpp"
 
 #include "nodes/analysis/distancetransform.hpp"
 #include "nodes/blur/bilateralfilter.hpp"
@@ -18,63 +18,66 @@
 #include "nodes/restoration/denoise.hpp"
 #include "nodes/segmentation/connectedcomps.hpp"
 #include "src/nodes/filter/morphology.hpp"
-#include <gui/mainwindow.hpp>
-#include <nodes/noderegistry.hpp>
+
+#include <nitro/core/nodes/noderegistry.hpp>
+#include <nitro/gui/nodeeditor/mainwindow.hpp>
+
 
 namespace nitro::ImProc {
 
 ImProc::ImProc() = default;
 
-void ImProc::registerNodes(std::shared_ptr<NodeRegistry> &registry, MainWindow *window) {
-    Q_UNUSED(window);
-    registerFilterNodes(registry);
-    registerAnalysisNodes(registry);
-    registerInputNodes(registry);
-    registerQualityMetricNodes(registry);
-    registerRestorationNodes(registry);
-    registerQuantizationNodes(registry);
+std::vector<CreatorVariant> ImProc::registerNodes() {
+    std::vector<CreatorVariant> node_creators;
+    registerFilterNodes(node_creators);
+    registerAnalysisNodes(node_creators);
+    registerInputNodes(node_creators);
+    registerQualityMetricNodes(node_creators);
+    registerRestorationNodes(node_creators);
+    registerQuantizationNodes(node_creators);
+    return node_creators;
 }
 
-void ImProc::registerInputNodes(std::shared_ptr<NodeRegistry> &registry) const {
+void ImProc::registerInputNodes(std::vector<CreatorVariant> &node_creator) const {
     const QString category = "Input";
-    registry->registerNode(MaskOperator::creator(category));
-    registry->registerNode(StructElemOperator::creator(category));
+    node_creator.emplace_back(MaskOperator::creator(category));
+    node_creator.emplace_back(StructElemOperator::creator(category));
 }
 
-void ImProc::registerFilterNodes(std::shared_ptr<NodeRegistry> &registry) const {
+void ImProc::registerFilterNodes(std::vector<CreatorVariant> &node_creator) const {
     const QString category = "Filter";
-    registry->registerNode(BoxFilterOperator::creator(category));
-    registry->registerNode(GaussianBlurOperator::creator(category));
-    registry->registerNode(BilateralFilterOperator::creator(category));
-    registry->registerNode(CannyEdgeDetectionOperator::creator(category));
-    registry->registerNode(MorphologyOperator::creator(category));
-    registry->registerNode(FFTOperator::creator(category));
-    registry->registerNode(DCTOperator::creator(category));
-    registry->registerNode(FFTShiftOperator::creator(category));
+    node_creator.emplace_back(BoxFilterOperator::creator(category));
+    node_creator.emplace_back(GaussianBlurOperator::creator(category));
+    node_creator.emplace_back(BilateralFilterOperator::creator(category));
+    node_creator.emplace_back(CannyEdgeDetectionOperator::creator(category));
+    node_creator.emplace_back(MorphologyOperator::creator(category));
+    node_creator.emplace_back(FFTOperator::creator(category));
+    node_creator.emplace_back(DCTOperator::creator(category));
+    node_creator.emplace_back(FFTShiftOperator::creator(category));
 }
 
-void ImProc::registerAnalysisNodes(std::shared_ptr<NodeRegistry> &registry) const {
+void ImProc::registerAnalysisNodes(std::vector<CreatorVariant> &node_creator) const {
     const QString category = "Analysis";
-    registry->registerNode(DistanceTransformOperator::creator(category));
-    registry->registerNode(ConnectedCompsOperator::creator(category));
+    node_creator.emplace_back(DistanceTransformOperator::creator(category));
+    node_creator.emplace_back(ConnectedCompsOperator::creator(category));
 }
 
-void ImProc::registerQualityMetricNodes(std::shared_ptr<NodeRegistry> &registry) const {
+void ImProc::registerQualityMetricNodes(std::vector<CreatorVariant> &node_creator) const {
     const QString category = "Quality";
-    registry->registerNode(MseOperator::creator(category));
-    registry->registerNode(PsnrOperator::creator(category));
-    registry->registerNode(FlipOperator::creator(category));
+    node_creator.emplace_back(MseOperator::creator(category));
+    node_creator.emplace_back(PsnrOperator::creator(category));
+    // registry->registerNode(FlipOperator::creator(category));
 }
 
-void ImProc::registerRestorationNodes(std::shared_ptr<NodeRegistry> &registry) const {
+void ImProc::registerRestorationNodes(std::vector<CreatorVariant> &node_creator) const {
     const QString category = "Restoration";
-    registry->registerNode(DenoiseOperator::creator(category));
+    node_creator.emplace_back(DenoiseOperator::creator(category));
 }
 
-void ImProc::registerQuantizationNodes(std::shared_ptr<NodeRegistry> &registry) {
+void ImProc::registerQuantizationNodes(std::vector<CreatorVariant> &node_creator) const {
     const QString category = "Quantization";
-    registry->registerNode(QuantizeOperator::creator(category));
-    registry->registerNode(KMeansOperator::creator(category));
+    node_creator.emplace_back(QuantizeOperator::creator(category));
+    node_creator.emplace_back(KMeansOperator::creator(category));
 }
 
 } // namespace nitro::ImProc
