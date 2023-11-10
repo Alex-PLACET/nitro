@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "conan install",
+            "type": "shell",
+            "command": "${command:python.interpreterPath}",
+            "args": [
+                "${workspaceFolder}/buildsystem/conan_setup.py",
+                "--conanfile",
+                "\"${workspaceFolder}\"",
+                "--build_kit",
+                "${command:cmake.buildKit}",
+                "--cppstd",
+                "20",
+                "--build_type",
+                "${command:cmake.buildType}",
+                "--output_directory",
+                "${command:cmake.buildDirectory}/conan",
+                "--generator",
+                "Ninja",
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        }
+    ]
+}

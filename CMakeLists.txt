@@ -25,9 +25,10 @@ set(CMAKE_AUTORCC ON)
 #                             Required components                            #
 # -------------------------------------------------------------------------- #
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Gui Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS OpenGL OpenGLWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS OpenGL OpenGLWidgets)
+set(QT_DIR ${Qt6_DIR})
 find_package(OpenCV REQUIRED)
 find_package(OpenMP)
 

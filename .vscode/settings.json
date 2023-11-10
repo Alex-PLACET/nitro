@@ -1,0 +1,32 @@
+{
+    "files.associations": {
+        "*.moc": "cpp",
+        "*.qrc": "xml",
+        "*.ui": "xml"
+    },
+    "cmake.configureArgs": [
+        "-DQt6_DIR:FILEPATH=C:/Qt/6.6.0/msvc2019_64/lib/cmake/Qt6",
+        "-DCMAKE_TOOLCHAIN_FILE:FILEPATH=${command:cmake.buildDirectory}/conan/build/${buildType}/generators/conan_toolchain.cmake",
+        // "-DCMAKE_CXX_CLANG_TIDY=clang-tidy;--extra-arg=/EHsc"
+    ],
+    "cmake.preferredGenerators": [
+        "Ninja"
+    ],
+    "cmake.useCMakePresets": "never",
+    "cmake.exportCompileCommandsFile": true,
+    "cmake.configureOnEdit": false,
+    "cmake.buildDirectory": "${workspaceFolder}/build/${buildKitVendor}/${buildKitVersion}/${buildType}",
+    "cmake.copyCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "clangd.onConfigChanged": "restart",
+    "clangd.arguments": [
+        "-pretty",
+        "--background-index",
+        "--compile-commands-dir=${workspaceFolder}\\build\\",
+    ],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic"
+}

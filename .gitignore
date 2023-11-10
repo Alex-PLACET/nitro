@@ -21,7 +21,6 @@ CatmarkSubdiv
 
 # VSCode files
 .vs
-.vscode/
 .code-workspace
 
 # Other IDE files
