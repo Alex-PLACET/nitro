@@ -18,10 +18,10 @@ void BilateralFilterOperator::execute(NodePorts &nodePorts) {
         return;
     }
     // Get the input data
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    double sigmaCol = nodePorts.inputValue(INPUT_SIGMA_C);
-    double sigmaSpace = nodePorts.inputValue(INPUT_SIGMA_S);
-    int d = nodePorts.inputInteger(INPUT_D);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const double sigmaCol = nodePorts.inputValue(INPUT_SIGMA_C);
+    const double sigmaSpace = nodePorts.inputValue(INPUT_SIGMA_S);
+    const int d = nodePorts.inputInteger(INPUT_D);
 
     // Perform filtering
     cv::Mat result;

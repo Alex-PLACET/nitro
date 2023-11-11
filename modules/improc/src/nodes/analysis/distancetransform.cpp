@@ -47,11 +47,11 @@ void DistanceTransformOperator::execute(NodePorts &nodePorts) {
         return;
     }
     // Get the input data
-    auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    double threshold = nodePorts.inputValue(INPUT_THRESH);
-    int mode = nodePorts.getOption(MODE_DROPDOWN);
-    int signedDf = nodePorts.getOption(OPTION_SIGNED);
-    bool normalize = nodePorts.optionEnabled(OPTION_NORMALIZE);
+    const auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const double threshold = nodePorts.inputValue(INPUT_THRESH);
+    const int mode = nodePorts.getOption(MODE_DROPDOWN);
+    const int signedDf = nodePorts.getOption(OPTION_SIGNED);
+    const bool normalize = nodePorts.optionEnabled(OPTION_NORMALIZE);
 
     cv::DistanceTypes type;
     switch (mode) {

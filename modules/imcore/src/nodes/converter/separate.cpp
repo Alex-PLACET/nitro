@@ -13,7 +13,7 @@ void SeparateOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
 
     std::vector<cv::Mat> channels;
     if (inputImg->channels() == 1) {
@@ -24,8 +24,8 @@ void SeparateOperator::execute(NodePorts &nodePorts) {
     } else {
         cv::split(*inputImg, channels);
     }
-    for (int i = 0; i < channels.size(); i++) {
-        QString name = QString("Channel %1").arg(i + 1);
+    for (size_t i = 0; i < channels.size(); i++) {
+        const QString name = QString("Channel %1").arg(i + 1);
         nodePorts.output<GrayImageData>(name, channels[i]);
     }
 }

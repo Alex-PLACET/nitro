@@ -20,10 +20,10 @@ void MapRangeOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    double fromMin = nodePorts.inputValue(INPUT_FROM_MIN);
-    double fromMax = nodePorts.inputValue(INPUT_FROM_MAX);
-    double toMin = nodePorts.inputValue(INPUT_TO_MIN);
-    double toMax = nodePorts.inputValue(INPUT_TO_MAX);
+    const double fromMin = nodePorts.inputValue(INPUT_FROM_MIN);
+    const double fromMax = nodePorts.inputValue(INPUT_FROM_MAX);
+    const double toMin = nodePorts.inputValue(INPUT_TO_MIN);
+    const double toMax = nodePorts.inputValue(INPUT_TO_MAX);
     if (nodePorts.inputOfType<DecimalData>(INPUT_IMAGE)) {
         double value = nodePorts.inputValue(INPUT_IMAGE);
         value = (value - fromMin) / (fromMax - fromMin);

@@ -17,10 +17,10 @@ void GaussianBlurOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    int borderOption = nodePorts.getOption(BORDER_DROPDOWN);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const int borderOption = nodePorts.getOption(BORDER_DROPDOWN);
     int kSize = nodePorts.inputInteger(INPUT_SIZE);
-    double sigma = nodePorts.inputValue(INPUT_SIGMA);
+    const double sigma = nodePorts.inputValue(INPUT_SIGMA);
     cv::Mat result;
     kSize = kSize % 2 == 0 ? std::max(kSize - 1, 1) : kSize;
     cv::GaussianBlur(*inputImg, result, cv::Size(kSize, kSize), sigma, sigma, borderOption);

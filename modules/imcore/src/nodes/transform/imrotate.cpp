@@ -16,8 +16,8 @@ void ImRotateOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int option = nodePorts.getOption(MODE_DROPDOWN);
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
 
     cv::RotateFlags mode;
     switch (option) {

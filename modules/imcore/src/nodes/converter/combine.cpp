@@ -17,12 +17,12 @@ void CombineOperator::execute(NodePorts &nodePorts) {
 
     std::vector<cv::Mat> channels;
     channels.resize(3);
-    for (int i = 0; i < channels.size(); i++) {
-        QString name = QString("Channel %1").arg(i + 1);
-        auto inputImg = nodePorts.inGetAs<GrayImageData>(name);
+    for (size_t i = 0; i < channels.size(); i++) {
+        const QString name = QString("Channel %1").arg(i + 1);
+        const auto inputImg = nodePorts.inGetAs<GrayImageData>(name);
         channels[i] = *inputImg;
     }
-    for (int i = 1; i < channels.size(); i++) {
+    for (size_t i = 1; i < channels.size(); i++) {
         if (channels[i].size != channels[0].size || channels[i].depth() != channels[0].depth()) {
             return;
         }

@@ -16,13 +16,16 @@ static inline const QString MODE_DROPDOWN = "Mode";
 static inline const QString OUTPUT_VALUE = "Value";
 
 static double minMat(const cv::Mat &in) {
-    double minValue, maxValue;
+    double minValue = 0;
+    double maxValue = 0;
     std::vector<cv::Mat> channels;
     cv::split(in, channels);
-    cv::Point minLoc, maxLoc;
+    cv::Point minLoc;
+    cv::Point maxLoc;
     cv::minMaxLoc(channels[0], &minValue, &maxValue, &minLoc, &maxLoc);
     for (int i = 1; i < channels.size(); i++) {
-        double minValueTemp, maxValueTemp;
+        double minValueTemp = 0;
+        double maxValueTemp = 0;
         cv::minMaxLoc(channels[i], &minValueTemp, &maxValueTemp, &minLoc, &maxLoc);
         minValue = std::min(minValue, minValueTemp);
         maxValue = std::max(maxValue, maxValueTemp);
@@ -64,9 +67,9 @@ static double averageMat(const cv::Mat &in) {
 }
 
 template<typename T>
-int countUniqueValues(const cv::Mat &mat) {
+size_t countUniqueValues(const cv::Mat &mat) {
     std::unordered_set<T> uniqueValues;
-
+    uniqueValues.reserve(mat.rows * mat.cols);
     // Iterate over each element in the matrix
     for (int i = 0; i < mat.rows; ++i) {
         const T *row_ptr = mat.ptr<T>(i);
@@ -75,7 +78,7 @@ int countUniqueValues(const cv::Mat &mat) {
         }
     }
 
-    return int(uniqueValues.size());
+    return uniqueValues.size();
 }
 
 // Note: does not count the unique number of colors in case of color images.

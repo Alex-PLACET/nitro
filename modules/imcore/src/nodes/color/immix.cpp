@@ -37,19 +37,18 @@ static void match(const cv::Mat &src, cv::Mat &dest, const cv::Size &size, int n
 
 // ensures the images all have the same size and number of channels
 void MixOperator::initUnifiedInputs(NodePorts &nodePorts) {
-    auto fac = *nodePorts.inGetAs<GrayImageData>(INPUT_FAC);
-    auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
-    auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
+    const auto fac = *nodePorts.inGetAs<GrayImageData>(INPUT_FAC);
+    const auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
+    const auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
 
-    int numChannels = std::max({fac.channels(), in1.channels(), in2.channels()});
+    const int numChannels = std::max({fac.channels(), in1.channels(), in2.channels()});
+
+    const int area1 = fac.cols * fac.rows;
+    const int area2 = in1.cols * in1.rows;
+    const int area3 = in2.cols * in2.rows;
+
+    const int maxArea = std::max({area1, area2, area3});
     cv::Size size;
-
-    int area1 = fac.cols * fac.rows;
-    int area2 = in1.cols * in1.rows;
-    int area3 = in2.cols * in2.rows;
-
-    int maxArea = std::max({area1, area2, area3});
-
     if (maxArea == area1) {
         size = fac.size();
     } else if (maxArea == area2) {
@@ -70,7 +69,7 @@ void MixOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
 
     initUnifiedInputs(nodePorts);
     cv::Mat result;

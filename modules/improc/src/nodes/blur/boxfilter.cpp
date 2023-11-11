@@ -16,10 +16,10 @@ void BoxFilterOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     int kSize = nodePorts.inputInteger(INPUT_SIZE);
-    int option = nodePorts.getOption(MODE_DROPDOWN);
-    int borderOption = nodePorts.getOption(BORDER_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int borderOption = nodePorts.getOption(BORDER_DROPDOWN);
 
     cv::Mat charImg;
     inputImg->convertTo(charImg, CV_8U, 255);

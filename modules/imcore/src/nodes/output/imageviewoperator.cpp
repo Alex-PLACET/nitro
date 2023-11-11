@@ -34,7 +34,7 @@ void ImageViewOperator::execute(NodePorts &nodePorts) {
         }
         return;
     }
-    auto im = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto im = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
 
     if (im->rows == 1 && im->cols == 1) {
         cv::resize(*im, *im, {256, 256});

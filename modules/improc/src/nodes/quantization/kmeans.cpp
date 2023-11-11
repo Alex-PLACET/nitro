@@ -4,6 +4,7 @@
 #include <nitro/datatypes/colimagedata.hpp>
 #include <nitro/datatypes/grayimagedata.hpp>
 #include <opencv2/imgproc.hpp>
+#include <stdint.h>
 
 namespace nitro::ImProc {
 
@@ -27,35 +28,31 @@ static inline int findClosestMean(const std::vector<float> &means, int k, int va
     return meanIdx;
 }
 
-static void histKMeans(const std::vector<int> &hist,
+static void histKMeans(const std::vector<uint64_t> &hist,
                        int k,
                        int iter,
                        double epsilon,
                        std::vector<float> &means,
                        std::vector<int> &labels) {
-    int size = hist.size();
-
+    const size_t size = hist.size();
     means.resize(k);
-    std::vector<int> meanCounts(k);
-    std::vector<float> oldMeans(k);
-    std::fill(meanCounts.begin(), meanCounts.end(), 0);
-    std::fill(oldMeans.begin(), oldMeans.end(), 0);
-    for (int i = 0; i < k; i++) {
+    std::vector<int> meanCounts(k, 0);
+    std::vector<float> oldMeans(k, 0);
+    for (size_t i = 0; i < k; i++) {
         means[i] = i * 255.0f / (k - 1.0);
     }
 
     labels.resize(size);
 
     for (int i = 0; i < iter; i++) {
-
         for (int j = 0; j < size; ++j) {
-            int closestMeanIdx = findClosestMean(means, k, j);
+            const int closestMeanIdx = findClosestMean(means, k, j);
             labels[j] = closestMeanIdx;
             meanCounts[closestMeanIdx] += hist[j];
         }
         // Update means
         std::fill(means.begin(), means.end(), 0);
-        for (int j = 0; j < size; ++j) {
+        for (size_t j = 0; j < size; ++j) {
             means[labels[j]] += j * hist[j];
         }
         float diff = 0;
@@ -74,9 +71,8 @@ static void histKMeans(const std::vector<int> &hist,
     }
 }
 
-static std::vector<int> getHistogram(const cv::Mat &src) {
-    std::vector<int> hist(NUM_BINS);
-    std::fill(hist.begin(), hist.end(), 0);
+static std::vector<uint64_t> getHistogram(const cv::Mat &src) {
+    std::vector<uint64_t> hist(NUM_BINS, 0);
     for (int i = 0; i < src.rows; ++i) {
         const uchar *row_ptr = src.ptr<uchar>(i);
         for (int j = 0; j < src.cols; ++j) {
@@ -131,10 +127,10 @@ static cv::Mat kMeansColors(const cv::Mat &image,
     cv::Mat quantImg(image.size(), image.type());
     for (int y = 0; y < image.rows; y++) {
         for (int x = 0; x < image.cols; x++) {
-            int cluster_idx = labels.at<int>(y * image.cols + x, 0);
+            const int cluster_idx = labels.at<int>(y * image.cols + x, 0);
             if (centers.cols == 3) {
                 for (int i = 0; i < centers.cols; i++) {
-                    float v = centers.at<float>(cluster_idx, i);
+                    const float v = centers.at<float>(cluster_idx, i);
                     quantImg.at<cv::Vec3f>(y, x)[i] = v; // This is an out of bounds memory access?
                 }
             } else {
@@ -150,8 +146,8 @@ void KMeansOperator::execute(NodePorts &nodePorts) {
         return;
     }
 
-    int k = nodePorts.inputInteger(INPUT_K);
-    int maxIter = nodePorts.inputInteger(INPUT_MAX_ITER);
+    const int k = nodePorts.inputInteger(INPUT_K);
+    const int maxIter = nodePorts.inputInteger(INPUT_MAX_ITER);
 
     cv::Mat inputImg;
     cv::Mat kMeansDat;

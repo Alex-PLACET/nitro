@@ -20,9 +20,9 @@ void RgbOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    double r = nodePorts.inputValue(INPUT_R);
-    double g = nodePorts.inputValue(INPUT_G);
-    double b = nodePorts.inputValue(INPUT_B);
+    const double r = nodePorts.inputValue(INPUT_R);
+    const double g = nodePorts.inputValue(INPUT_G);
+    const double b = nodePorts.inputValue(INPUT_B);
 
     if (colLabelPixMap_.size() != colLabel_->size()) {
         colLabelPixMap_ = QPixmap(colLabel_->width(), colLabel_->height());
@@ -30,7 +30,7 @@ void RgbOperator::execute(NodePorts &nodePorts) {
     colLabelPixMap_.fill(QColor(r * 255, g * 255, b * 255));
     colLabel_->setPixmap(colLabelPixMap_);
 
-    cv::Mat col(1, 1, CV_32FC3, cv::Scalar(r, g, b));
+    const cv::Mat col(1, 1, CV_32FC3, cv::Scalar(r, g, b));
     nodePorts.output<ColImageData>(OUTPUT_COL, col);
 }
 

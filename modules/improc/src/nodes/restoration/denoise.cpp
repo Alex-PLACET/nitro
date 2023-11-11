@@ -14,7 +14,7 @@ void DenoiseOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
 
     cv::Mat grayImage;
     inputImg->convertTo(grayImage, CV_8U, 255);

@@ -16,9 +16,9 @@ void StructElemOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int option = nodePorts.getOption(MODE_DROPDOWN);
-    int width = nodePorts.inputInteger(INPUT_X);
-    int height = nodePorts.inputInteger(INPUT_Y);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int width = nodePorts.inputInteger(INPUT_X);
+    const int height = nodePorts.inputInteger(INPUT_Y);
 
     cv::MorphShapes shape;
     switch (option) {
@@ -35,7 +35,7 @@ void StructElemOperator::execute(NodePorts &nodePorts) {
             shape = cv::MORPH_RECT;
             break;
     }
-    cv::Mat kernel = cv::getStructuringElement(shape, {width, height});
+    const cv::Mat kernel = cv::getStructuringElement(shape, {width, height});
     cv::Mat result;
     kernel.convertTo(result, CV_32F);
 

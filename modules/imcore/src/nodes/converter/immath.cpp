@@ -71,19 +71,15 @@ static void match(const cv::Mat &src, cv::Mat &dest, const cv::Size &size, int n
 
 // ensures the images all have the same size and number of channels
 void MathOperator::initUnifiedInputs(NodePorts &nodePorts) {
-    auto fac = *nodePorts.inGetAs<GrayImageData>(INPUT_FAC);
-    auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
-    auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
-
-    int numChannels = std::max({fac.channels(), in1.channels(), in2.channels()});
+    const auto fac = *nodePorts.inGetAs<GrayImageData>(INPUT_FAC);
+    const auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
+    const auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
+    const int numChannels = std::max({fac.channels(), in1.channels(), in2.channels()});
+    const int area1 = fac.cols * fac.rows;
+    const int area2 = in1.cols * in1.rows;
+    const int area3 = in2.cols * in2.rows;
+    const int maxArea = std::max({area1, area2, area3});
     cv::Size size;
-
-    int area1 = fac.cols * fac.rows;
-    int area2 = in1.cols * in1.rows;
-    int area3 = in2.cols * in2.rows;
-
-    int maxArea = std::max({area1, area2, area3});
-
     if (maxArea == area1) {
         size = fac.size();
     } else if (maxArea == area2) {
@@ -108,10 +104,10 @@ void MathOperator::execute(NodePorts &nodePorts) {
     // TODO: only update when changed
     int option = nodePorts.getOption(MODE_DROPDOWN);
     if (nodePorts.allInputOfType<DecimalData>()) {
-        double facDouble = nodePorts.inputValue(INPUT_FAC);
-        double in1 = nodePorts.inputValue(INPUT_VALUE_1);
-        double in2 = nodePorts.inputValue(INPUT_VALUE_2);
-        double result = regularBoolMath(facDouble, in1, in2, option);
+        const double facDouble = nodePorts.inputValue(INPUT_FAC);
+        const double in1 = nodePorts.inputValue(INPUT_VALUE_1);
+        const double in2 = nodePorts.inputValue(INPUT_VALUE_2);
+        const double result = regularBoolMath(facDouble, in1, in2, option);
         nodePorts.output<DecimalData>(OUTPUT_VALUE, result);
         return;
     }
@@ -120,14 +116,12 @@ void MathOperator::execute(NodePorts &nodePorts) {
 
     cv::Mat result;
     switch (option) {
-        case 0: {
+        case 0:
             cv::add(in1_, in2_, result);
             break;
-        }
-        case 1: {
+        case 1:
             cv::subtract(in1_, in2_, result);
             break;
-        }
         case 2:
             cv::multiply(in1_, in2_, result);
             break;

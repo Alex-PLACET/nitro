@@ -37,7 +37,7 @@ void FFTShiftOperator::execute(NodePorts &nodePorts) {
         return;
     }
     // Get the input data
-    auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
 
     cv::Mat result;
     fftShift(*inputImg, result);

@@ -18,7 +18,7 @@ static double mse(const cv::Mat &im1, const cv::Mat &im2) {
         return -1;
     }
     cv::absdiff(im1, im2, diff);
-    cv::Mat squaredDiff = diff.mul(diff);
+    const cv::Mat squaredDiff = diff.mul(diff);
     return cv::mean(squaredDiff).val[0];
 }
 
@@ -27,9 +27,9 @@ void PsnrOperator::execute(NodePorts &nodePorts) {
         return;
     }
 
-    auto imIn = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    auto imRef = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE_REF);
-    double psnr = 10.0 * log10(1.0 / mse(imIn, imRef));
+    const auto imIn = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const auto imRef = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE_REF);
+    const double psnr = 10.0 * log10(1.0 / mse(imIn, imRef));
     nodePorts.output<DecimalData>(OUTPUT_VALUE, psnr);
 }
 

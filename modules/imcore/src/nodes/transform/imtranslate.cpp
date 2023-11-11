@@ -17,20 +17,20 @@ const inline QString INTERPOL_METHOD_LABEL = "Interpolation Method";
 
 static cv::Mat translateImagePad(const cv::Mat &image, int dx, int dy) {
 
-    int newWidth = image.cols + std::abs(dx);
-    int newHeight = image.rows + std::abs(dy);
+    const int newWidth = image.cols + std::abs(dx);
+    const int newHeight = image.rows + std::abs(dy);
 
     dx = std::max(dx, 0);
     dy = std::max(dy, 0);
 
-    cv::Mat translationMatrix = (cv::Mat_<float>(2, 3) << 1, 0, dx, 0, 1, dy);
+    const cv::Mat translationMatrix = (cv::Mat_<float>(2, 3) << 1, 0, dx, 0, 1, dy);
     cv::Mat translatedImage;
     cv::warpAffine(image, translatedImage, translationMatrix, {newWidth, newHeight});
     return translatedImage;
 }
 
 static cv::Mat translateImage(const cv::Mat &image, int dx, int dy) {
-    cv::Mat translationMatrix = (cv::Mat_<float>(2, 3) << 1, 0, dx, 0, 1, dy);
+    const cv::Mat translationMatrix = (cv::Mat_<float>(2, 3) << 1, 0, dx, 0, 1, dy);
     cv::Mat translatedImage;
     cv::warpAffine(image, translatedImage, translationMatrix, image.size());
     return translatedImage;
@@ -40,12 +40,12 @@ void TranslateOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    double offsetRatioX = nodePorts.inputValue(INPUT_X);
-    double offsetRatioY = nodePorts.inputValue(INPUT_Y);
-    int offsetX = int(std::round(offsetRatioX * im1->cols));
-    int offsetY = int(std::round(offsetRatioY * im1->rows));
-    int option = nodePorts.getOption(OPTION_PAD);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const double offsetRatioX = nodePorts.inputValue(INPUT_X);
+    const double offsetRatioY = nodePorts.inputValue(INPUT_Y);
+    const int offsetX = int(std::round(offsetRatioX * im1->cols));
+    const int offsetY = int(std::round(offsetRatioY * im1->rows));
+    const int option = nodePorts.getOption(OPTION_PAD);
 
     cv::Mat result;
     if (option) {

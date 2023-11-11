@@ -13,7 +13,7 @@ HistogramView::HistogramView(QWidget *parent) : QChartView(parent) {
     chart_ = new QChart();
     chart_->legend()->hide();
     chart_->setTheme(QChart::ChartThemeDark);
-    QColor backgroundCol = QApplication::palette().color(QPalette::Window);
+    const QColor backgroundCol = QApplication::palette().color(QPalette::Window);
     chart_->setBackgroundBrush(backgroundCol);
 
     yAxis_ = new QValueAxis();
@@ -28,11 +28,11 @@ HistogramView::HistogramView(QWidget *parent) : QChartView(parent) {
 }
 
 void HistogramView::addHistSeries(cv::Mat &singleChannelImg, const QColor &color) {
-    int histSize = 256;
-    float range[] = {0, 1};
+    constexpr int histSize = 256;
+    constexpr float range[] = {0, 1};
     const float *histRange = {range};
-    bool uniform = true;
-    bool accumulate = false;
+    constexpr bool uniform = true;
+    constexpr bool accumulate = false;
     cv::Mat histogram;
     cv::calcHist(&singleChannelImg,
                  1,
@@ -49,7 +49,7 @@ void HistogramView::addHistSeries(cv::Mat &singleChannelImg, const QColor &color
 
     QLineSeries *series = new QLineSeries();
     QLineSeries *bottomSeries = new QLineSeries();
-    float *histRow = normalizedHist.ptr<float>();
+    const float *histRow = normalizedHist.ptr<float>();
     for (int i = 0; i < histSize; i++) {
         float x = i * 1.0 / (histSize - 1);
         series->append(x, histRow[i]);

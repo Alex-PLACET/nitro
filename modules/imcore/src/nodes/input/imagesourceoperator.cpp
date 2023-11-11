@@ -40,7 +40,7 @@ void loadImage(const QString &filePath, cv::Mat &dest, cv::Mat &alpha) {
 }
 
 void ImageSourceOperator::execute(NodePorts &nodePorts) {
-    QString filePath = nodePorts.getGlobalProperty(OUTPUT_IMAGE);
+    const QString filePath = nodePorts.getGlobalProperty(OUTPUT_IMAGE);
     cv::Mat img;
     cv::Mat alpha;
     loadImage(filePath, img, alpha);
@@ -50,10 +50,8 @@ void ImageSourceOperator::execute(NodePorts &nodePorts) {
         nodePorts.output<GrayImageData>(OUTPUT_ALPHA, blankImg_);
     } else {
         if (isGrayscale(img)) {
-
             nodePorts.output<GrayImageData>(OUTPUT_IMAGE, img);
         } else {
-
             nodePorts.output<ColImageData>(OUTPUT_IMAGE, img);
         }
         if (alpha.empty()) {
@@ -63,14 +61,13 @@ void ImageSourceOperator::execute(NodePorts &nodePorts) {
             nodePorts.output<GrayImageData>(OUTPUT_ALPHA, alpha);
         }
     }
-    int size = displayImgLabel_->width();
+    const int size = displayImgLabel_->width();
     displayImgLabel_->setFixedHeight(size);
     displayImgLabel_->setPixmap(QPixmap::fromImage(cvMatToQImage(img, displayBuf_))
                                         .scaled(size, size, Qt::KeepAspectRatio));
 }
 
 std::function<std::unique_ptr<NitroNode>()> ImageSourceOperator::creator(const QString &category) {
-
     return [category]() {
         auto *imgDisplayLabel = new QLabel();
         imgDisplayLabel->setAlignment(Qt::AlignCenter);

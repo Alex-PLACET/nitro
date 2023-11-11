@@ -10,7 +10,6 @@ HistogramViewerDockWidget::HistogramViewerDockWidget(HistogramView *histViewer, 
     : NitroDockWidget("Histogram Viewer", window),
       histViewer_(histViewer) {
     setWindowTitle("Histogram Viewer");
-
     setWidget(histViewer_);
     setIcon(":/icons/hist_viewer.png");
 }

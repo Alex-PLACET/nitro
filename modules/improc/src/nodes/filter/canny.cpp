@@ -18,9 +18,9 @@ void CannyEdgeDetectionOperator::execute(NodePorts &nodePorts) {
     }
 
     // Get the input data
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    double thresh1 = nodePorts.inputValue(INPUT_THRESH_1);
-    double thresh2 = nodePorts.inputValue(INPUT_THRESH_2);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const double thresh1 = nodePorts.inputValue(INPUT_THRESH_1);
+    const double thresh2 = nodePorts.inputValue(INPUT_THRESH_2);
     int aperture = nodePorts.inputInteger(INPUT_APERTURE);
     if (aperture % 2 == 0) {
         aperture -= 1;

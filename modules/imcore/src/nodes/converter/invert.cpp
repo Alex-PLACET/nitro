@@ -17,16 +17,15 @@ void InvertOperator::execute(NodePorts &nodePorts) {
     }
 
     auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    cv::Mat result;
-    result = cv::abs(1 - *inputImg);
+    cv::Mat result = cv::abs(1 - *inputImg);
     if (inputImg->channels() == 1) {
         result = cv::abs(1 - *inputImg);
     } else {
         std::vector<cv::Mat> channels;
-        std::vector<cv::Mat> outChannels;
         cv::split(*inputImg, channels);
+        std::vector<cv::Mat> outChannels;
         outChannels.resize(channels.size());
-        for (int i = 0; i < channels.size(); i++) {
+        for (size_t i = 0; i < channels.size(); i++) {
             outChannels[i] = cv::abs(1 - channels[i]);
         }
         cv::merge(outChannels, result);

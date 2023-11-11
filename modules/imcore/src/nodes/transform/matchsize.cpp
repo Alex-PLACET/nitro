@@ -21,12 +21,12 @@ void MatchSizeOperator::execute(NodePorts &nodePorts) {
         return;
     }
 
-    AspectRatioMode arMode = static_cast<AspectRatioMode>(
+    const AspectRatioMode arMode = static_cast<AspectRatioMode>(
             nodePorts.getOption(ASPECT_RATIO_DROPDOWN));
-    auto imIn = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    auto imTarget = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_TARGET);
+    const auto imIn = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto imTarget = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_TARGET);
 
-    int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
     cv::InterpolationFlags mode;
     if (option == 0) {
         mode = cv::INTER_LINEAR;
@@ -35,8 +35,7 @@ void MatchSizeOperator::execute(NodePorts &nodePorts) {
     } else {
         mode = cv::INTER_NEAREST;
     }
-    cv::Mat result = nitro::resize(*imIn, imTarget->size(), mode, arMode);
-
+    const cv::Mat result = nitro::resize(*imIn, imTarget->size(), mode, arMode);
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 

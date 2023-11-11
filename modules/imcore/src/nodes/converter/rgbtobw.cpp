@@ -15,7 +15,7 @@ void RgbToGrayscaleOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     cv::Mat result;
     if (inputImg->channels() == 1) {
         inputImg->copyTo(result);

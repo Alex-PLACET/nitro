@@ -16,17 +16,17 @@ void ConnectedCompsOperator::execute(NodePorts &nodePorts) {
         return;
     }
     // Get the input data
-    auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    int option = nodePorts.getOption(OPTION_INVERSE);
-    int connectivity = option == 0 ? 4 : 8;
+    const auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const int option = nodePorts.getOption(OPTION_INVERSE);
+    const int connectivity = option == 0 ? 4 : 8;
 
-    double threshold = nodePorts.inputValue(INPUT_THRESH);
+    const double threshold = nodePorts.inputValue(INPUT_THRESH);
     cv::Mat imIn;
     cv::threshold(*inputImg, imIn, threshold, 1, cv::THRESH_BINARY);
     imIn.convertTo(imIn, CV_8UC1, 255);
 
     cv::Mat result;
-    int numComps = cv::connectedComponents(imIn, result, connectivity, CV_16U);
+    const int numComps = cv::connectedComponents(imIn, result, connectivity, CV_16U);
     result.convertTo(result, CV_32F, 1.0 / numComps);
 
     // Store the result

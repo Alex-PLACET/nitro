@@ -15,8 +15,8 @@ void DCTOperator::execute(NodePorts &nodePorts) {
         return;
     }
     // Get the input data
-    auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    int inverse = nodePorts.getOption(OPTION_INVERSE);
+    const auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const int inverse = nodePorts.getOption(OPTION_INVERSE);
 
     // Evaluate
     cv::Mat result;

@@ -17,8 +17,8 @@ void MorphologyOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_1);
-    auto im2 = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE_2);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_1);
+    const auto im2 = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE_2);
 
     cv::Mat kernel;
     im2->convertTo(kernel, CV_8UC1, 255);

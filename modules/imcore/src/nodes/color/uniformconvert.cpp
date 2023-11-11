@@ -17,12 +17,12 @@ void UniformConvertOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
     cv::Mat result;
 
     cv::cvtColor(inputImg, result, cv::COLOR_GRAY2RGB);
 
-    int mode = nodePorts.getOption(OPTION_INVERSE);
+    const int mode = nodePorts.getOption(OPTION_INVERSE);
     if (mode == 0) {
         cvtColor(result, result, cv::COLOR_RGB2Lab);
         if (nodePorts.optionEnabled(OPTION_ROUND)) {

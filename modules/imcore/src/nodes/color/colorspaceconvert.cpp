@@ -19,8 +19,8 @@ void ConvertOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    cv::ColorConversionCodes codec = codes_[nodePorts.getOption(MODE_DROPDOWN)];
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const cv::ColorConversionCodes codec = codes_[nodePorts.getOption(MODE_DROPDOWN)];
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     cv::Mat img;
     if (inputImg->channels() == 1) {
         cv::cvtColor(*inputImg, img, cv::COLOR_GRAY2RGB);

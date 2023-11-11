@@ -22,8 +22,7 @@ void RandomOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int seed = nodePorts.inputInteger(INPUT_SEED);
-
+    const int seed = nodePorts.inputInteger(INPUT_SEED);
     nodePorts.output<DecimalData>(OUTPUT_VAL, generateRandomDouble(seed));
 }
 

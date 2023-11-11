@@ -17,11 +17,10 @@ void NormalizeOperator::execute(NodePorts &nodePorts) {
         return;
     }
     auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    double min = nodePorts.inputValue(INPUT_MIN);
-    double max = nodePorts.inputValue(INPUT_MAX);
+    const double min = nodePorts.inputValue(INPUT_MIN);
+    const double max = nodePorts.inputValue(INPUT_MAX);
     cv::Mat result;
     cv::normalize(*inputImg, result, min, max, cv::NORM_MINMAX);
-
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 

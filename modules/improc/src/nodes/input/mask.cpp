@@ -22,20 +22,20 @@ void MaskOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int option = nodePorts.getOption(MODE_DROPDOWN);
-    int width = nodePorts.inputInteger(INPUT_X);
-    int height = nodePorts.inputInteger(INPUT_Y);
-    double innerWidth = nodePorts.inputValue(INPUT_MASK_WIDTH);
-    double innerHeight = nodePorts.inputValue(INPUT_MASK_HEIGHT);
-    double posX = nodePorts.inputValue(INPUT_POS_X);
-    double posY = nodePorts.inputValue(INPUT_POS_Y);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int width = nodePorts.inputInteger(INPUT_X);
+    const int height = nodePorts.inputInteger(INPUT_Y);
+    const double innerWidth = nodePorts.inputValue(INPUT_MASK_WIDTH);
+    const double innerHeight = nodePorts.inputValue(INPUT_MASK_HEIGHT);
+    const double posX = nodePorts.inputValue(INPUT_POS_X);
+    const double posY = nodePorts.inputValue(INPUT_POS_Y);
 
-    int kernelWidth = int(std::round(innerWidth * width / 2.0));
-    int kernelHeight = int(std::round(innerHeight * height / 2.0));
-    cv::Mat image(height, width, CV_8UC1, cv::Scalar(0));
+    const int kernelWidth = int(std::round(innerWidth * width / 2.0));
+    const int kernelHeight = int(std::round(innerHeight * height / 2.0));
+    const cv::Mat image(height, width, CV_8UC1, cv::Scalar(0));
     if (kernelHeight > 0 && kernelWidth > 0) {
-        int centerX = int(std::round(width * posX));
-        int centerY = int(std::round(height * posY));
+        const int centerX = int(std::round(width * posX));
+        const int centerY = int(std::round(height * posY));
         if (option == 0) {
             cv::ellipse(image,
                         {centerX, centerY},
@@ -46,9 +46,8 @@ void MaskOperator::execute(NodePorts &nodePorts) {
                         cv::Scalar(255),
                         -1);
         } else {
-            cv::Point v1 = {centerX - kernelWidth, centerY - kernelHeight};
-            cv::Point v2 = {centerX + kernelWidth, centerY + kernelHeight};
-
+            const cv::Point v1 = {centerX - kernelWidth, centerY - kernelHeight};
+            const cv::Point v2 = {centerX + kernelWidth, centerY + kernelHeight};
             cv::rectangle(image, v1, v2, cv::Scalar(255), -1);
         }
     }

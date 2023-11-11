@@ -10,12 +10,12 @@
 
 namespace nitro::ImCore {
 
-static inline const QString INPUT_IMAGE = "Image";
-static inline const QString OUTPUT_WIDTH = "Width";
-static inline const QString OUTPUT_HEIGHT = "Height";
-static inline const QString OUTPUT_AR = "Aspect Ratio";
-static inline const QString OUTPUT_NUM_PIXELS = "Num Pixels";
-static inline const QString OUTPUT_TYPE = "Type";
+static const QString INPUT_IMAGE(QStringLiteral("Image"));
+static const QString OUTPUT_WIDTH(QStringLiteral("Width"));
+static const QString OUTPUT_HEIGHT(QStringLiteral("Height"));
+static const QString OUTPUT_AR(QStringLiteral("Aspect Ratio"));
+static const QString OUTPUT_NUM_PIXELS(QStringLiteral("Num Pixels"));
+static const QString OUTPUT_TYPE(QStringLiteral("Type"));
 
 ImInfoOperator::ImInfoOperator(QLabel *typeLabel) : typeLabel_(typeLabel) {}
 
@@ -46,7 +46,6 @@ void ImInfoOperator::execute(NodePorts &nodePorts) {
         case CV_32S: // 32-bit signed integer
             type = "32-bit int";
             break;
-
         case CV_32F: // 32-bit floating-point
             type = "Float";
             break;

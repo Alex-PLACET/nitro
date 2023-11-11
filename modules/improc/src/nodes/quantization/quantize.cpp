@@ -16,8 +16,8 @@ void QuantizeOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto img = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    int k = nodePorts.inputInteger(INPUT_K) - 1;
+    const auto img = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const int k = nodePorts.inputInteger(INPUT_K) - 1;
 
     cv::Mat result = *img * k;
     cv::Mat imIn;

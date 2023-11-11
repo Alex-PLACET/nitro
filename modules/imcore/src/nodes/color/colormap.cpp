@@ -30,17 +30,16 @@ static cv::Mat createGradientImage(int width, int height) {
 ColorMapOperator::ColorMapOperator(QLabel *displayLabel) : displayLabel_(displayLabel) {}
 
 void ColorMapOperator::execute(NodePorts &nodePorts) {
-
-    int option = nodePorts.getOption(OPTION_DROPDOWN);
-    auto colormapType = static_cast<cv::ColormapTypes>(option);
-    cv::Mat mapLabel = createGradientImage(200, 20);
+    const int option = nodePorts.getOption(OPTION_DROPDOWN);
+    const auto colormapType = static_cast<cv::ColormapTypes>(option);
+    const cv::Mat mapLabel = createGradientImage(200, 20);
     cv::applyColorMap(mapLabel, mapLabel, colormapType);
     displayLabel_->setPixmap(QPixmap::fromImage(cvMatToQImage(mapLabel, displayImage_)));
 
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto img = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const auto img = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
     cv::Mat result;
 
     cv::Mat imIn;

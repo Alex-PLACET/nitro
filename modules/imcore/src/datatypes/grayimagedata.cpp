@@ -50,21 +50,21 @@ void GrayImageData::registerConversions() {
 
     GrayImageData::registerConversionFrom<DecimalData>(
             [](const std::shared_ptr<QtNodes::NodeData> &nodeData) {
-                auto imData = std::static_pointer_cast<DecimalData>(nodeData);
-                double val = imData->data();
+                const auto imData = std::static_pointer_cast<DecimalData>(nodeData);
+                const double val = imData->data();
                 return std::make_shared<cv::Mat>(1, 1, CV_32F, cv::Scalar(val));
             });
 
     GrayImageData::registerConversionFrom<IntegerData>(
             [](const std::shared_ptr<QtNodes::NodeData> &nodeData) {
-                auto imData = std::static_pointer_cast<IntegerData>(nodeData);
-                int val = imData->data();
+                const auto imData = std::static_pointer_cast<IntegerData>(nodeData);
+                const int val = imData->data();
                 return std::make_shared<cv::Mat>(1, 1, CV_32F, cv::Scalar(val / 255.0f));
             });
 
     GrayImageData::registerConversionFrom<ColImageData>(
             [](const std::shared_ptr<QtNodes::NodeData> &nodeData) {
-                auto imData = std::static_pointer_cast<ColImageData>(nodeData);
+                const auto imData = std::static_pointer_cast<ColImageData>(nodeData);
                 if (imData->data()->channels() == 1) {
                     return std::make_shared<cv::Mat>(*imData->data());
                 }

@@ -47,7 +47,7 @@ static void match(const cv::Mat &src, cv::Mat &dest, const cv::Size &size, int n
         cv::resize(dest, dest, size);
     }
     if (dest.channels() != numChannels) {
-        int conversionCode = 0;
+        cv::ColorConversionCodes conversionCode;
         if (numChannels == 1 && src.channels() == 3) {
             conversionCode = cv::COLOR_RGB2GRAY;
         } else if (numChannels == 3 && src.channels() == 1) {
@@ -59,10 +59,10 @@ static void match(const cv::Mat &src, cv::Mat &dest, const cv::Size &size, int n
 
 // ensures the images all have the same size and number of channels
 void BooleanMathOperator::initUnifiedInputs(NodePorts &nodePorts) {
-    auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
-    auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
+    const auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
+    const auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
 
-    int numChannels = std::max(in1.channels(), in2.channels());
+    const int numChannels = std::max(in1.channels(), in2.channels());
     cv::Size size;
     if (in1.cols * in1.rows > in2.cols * in2.rows) {
         size = in1.size();
@@ -79,11 +79,11 @@ void BooleanMathOperator::execute(NodePorts &nodePorts) {
     }
 
     // TODO: only update when changed
-    int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
     if (nodePorts.allInputOfType<DecimalData>()) {
-        double in1 = nodePorts.inputValue(INPUT_VALUE_1);
-        double in2 = nodePorts.inputValue(INPUT_VALUE_2);
-        double result = regularBoolMath(in1, in2, option);
+        const double in1 = nodePorts.inputValue(INPUT_VALUE_1);
+        const double in2 = nodePorts.inputValue(INPUT_VALUE_2);
+        const double result = regularBoolMath(in1, in2, option);
         nodePorts.output<DecimalData>(OUTPUT_VALUE, result);
         return;
     }

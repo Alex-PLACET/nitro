@@ -22,12 +22,12 @@ void ResizeOperator::execute(NodePorts &nodePorts) {
         return;
     }
 
-    AspectRatioMode arMode = static_cast<AspectRatioMode>(
+    const AspectRatioMode arMode = static_cast<AspectRatioMode>(
             nodePorts.getOption(ASPECT_RATIO_DROPDOWN));
-    int option = nodePorts.getOption(MODE_DROPDOWN);
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    int width = nodePorts.inputInteger(INPUT_X);
-    int height = nodePorts.inputInteger(INPUT_Y);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const int width = nodePorts.inputInteger(INPUT_X);
+    const int height = nodePorts.inputInteger(INPUT_Y);
 
     cv::InterpolationFlags mode;
     if (option == 0) {
@@ -37,7 +37,7 @@ void ResizeOperator::execute(NodePorts &nodePorts) {
     } else {
         mode = cv::INTER_NEAREST;
     }
-    cv::Mat result = resize(*im1, cv::Size(width, height), mode, arMode);
+    const cv::Mat result = resize(*im1, cv::Size(width, height), mode, arMode);
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 

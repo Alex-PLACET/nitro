@@ -15,8 +15,8 @@ void ValueViewOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    double val = nodePorts.inGetAs<DecimalData>(INPUT_VALUE);
-    double intPart;
+    const double val = nodePorts.inGetAs<DecimalData>(INPUT_VALUE);
+    double intPart = 0;
     if (std::modf(val, &intPart) == 0.0) {
         valueLabel_->setText(QString::number(val));
     } else {
