@@ -37,9 +37,9 @@ void DecompressOperator::execute(NodePorts &nodePorts) {
     // Get the input data
     auto residual = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
     auto smallImg = *nodePorts.inGetAs<GrayImageData>(INPUT_SMALL);
-    double filterSize = nodePorts.inputValue(INPUT_K_SIZE);
+    const double filterSize = nodePorts.inputValue(INPUT_K_SIZE);
 
-    double start = cv::getTickCount();
+    const double start = cv::getTickCount();
 
     // Small image
     cv::Mat largeMain;
@@ -53,14 +53,14 @@ void DecompressOperator::execute(NodePorts &nodePorts) {
         result = toRgb(result);
     }
 
-    double end = cv::getTickCount();
-    double elapsedTime = (end - start) / cv::getTickFrequency() * 1000.0;
-    timeLabel_->setText(QString("Time: %1 msec").arg(elapsedTime));
-    // Store the result
-    nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
+     const double end = cv::getTickCount();
+     const double elapsedTime = (end - start) / cv::getTickFrequency() * 1000.0;
+     timeLabel_->setText(QString("Time: %1 msec").arg(elapsedTime));
+     // Store the result
+     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> DecompressOperator::creator(const QString &category) {
+CreatorWithoutParameters DecompressOperator::creator(const QString &category) {
     return [category]() {
         auto *timeLabel = new QLabel("-");
         NitroNodeBuilder builder("Bit Decompress", "bitDecompress", category);

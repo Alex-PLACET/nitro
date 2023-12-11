@@ -17,11 +17,8 @@ NitroDockWidget::NitroDockWidget(const QString &title, MainWindow *window)
       window_(window),
       title_(title) {
     setWindowTitle(title_);
-
     QWidget *imViewTitleWrapper = initTitleBarWidget();
-
     setTitleBarWidget(imViewTitleWrapper);
-
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     setFeatures(features() & ~(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable));
 }

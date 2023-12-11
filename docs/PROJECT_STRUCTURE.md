@@ -62,8 +62,8 @@ A simple implementation of a denoising node is then as follows:
 ```c++
 #pragma once
 
-#include <nodes/nitronode.hpp>
-#include <nodes/nodeoperator.hpp>
+#include <nitro/core/nodes/nitronode.hpp>
+#include <nitro/core/nodes/nodeoperator.hpp>
 
 namespace nitro::ImProc {
 
@@ -78,7 +78,7 @@ public:
      * @param category Category name this node should be put in.
      * @return A function that creates this particular node.
      */
-    static std::function<std::unique_ptr<NitroNode>()> creator(const QString &category);
+    static CreatorWithoutParameters creator(const QString &category);
 
     /**
      * @brief Executes the Bilateral filtering algorithm of this node on the current input data.
@@ -96,7 +96,7 @@ public:
 
 ```c++
 #include "bilateralfilter.hpp"
-#include <colimagedata.hpp>
+#include <nitro/datatypes/colimagedata.hpp>
 #include <nodes/nitronodebuilder.hpp>
 
 #include <opencv2/imgproc.hpp>
@@ -128,7 +128,7 @@ void BilateralFilterOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> BilateralFilterOperator::creator(
+CreatorWithoutParameters BilateralFilterOperator::creator(
         const QString &category) {
     return [category]() {
         NitroNodeBuilder builder("Bilateral Filter", "bilateralFilter", category);
@@ -215,12 +215,9 @@ private:
 namespace nitro {
 
 IntegerData::IntegerData() : FlexibleData<int, IntegerData>(0, id_, title_, baseColor_) {
-    allowConversionFrom(DecimalData::id());
-}
 
 IntegerData::IntegerData(int value)
     : FlexibleData<int, IntegerData>(value, id_, title_, baseColor_) {
-    allowConversionFrom(DecimalData::id());
 }
 
 QString IntegerData::getDescription() const {

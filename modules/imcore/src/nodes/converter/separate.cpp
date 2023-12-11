@@ -30,8 +30,9 @@ void SeparateOperator::execute(NodePorts &nodePorts) {
     }
 }
 
-std::function<std::unique_ptr<NitroNode>()> SeparateOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters SeparateOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Separate Channels", "separateChannels", category);
         return builder.withOperator(std::make_unique<SeparateOperator>())
                 ->withIcon("layers.png")
@@ -40,7 +41,7 @@ std::function<std::unique_ptr<NitroNode>()> SeparateOperator::creator(const QStr
                 ->withOutputPort<GrayImageData>("Channel 1")
                 ->withOutputPort<GrayImageData>("Channel 2")
                 ->withOutputPort<GrayImageData>("Channel 3")
-                ->build();
+                ->build(converters_register);
     };
 }
 

@@ -31,14 +31,15 @@ QColor makeReadable(const QColor &color, bool lightMode) {
     b = qBound(0.0, b, 1.0);
 
     // Return adjusted color
-    return QColor::fromRgbF(r, g, b, color.alphaF());
+    return QColor::fromRgbF(static_cast<float>(r),
+                            static_cast<float>(g),
+                            static_cast<float>(b),
+                            color.alphaF());
 }
 
 int getMaxValue(const cv::Mat &mat) {
-    int depth = mat.depth();
-
-    int maxValue;
-
+    const int depth = mat.depth();
+    int maxValue = 0;
     switch (depth) {
         case CV_8U: // 8-bit unsigned integer (0-255)
             maxValue = 255;
@@ -74,7 +75,6 @@ int getMaxValue(const cv::Mat &mat) {
 
 // Source for the next two functions: https://github.com/asmaloney/asmOpenCV/blob/master/asmOpenCV.h
 QImage cvMatToQImage(const cv::Mat &src, cv::Mat &img) {
-
     switch (src.type()) {
         case CV_32F: {
             src.convertTo(img, CV_8U, 255);
@@ -84,7 +84,6 @@ QImage cvMatToQImage(const cv::Mat &src, cv::Mat &img) {
             src.convertTo(img, CV_8UC3, 255);
             break;
         }
-
         case CV_32FC4: {
             src.convertTo(img, CV_8UC4, 255);
             break;
@@ -132,9 +131,10 @@ QImage cvMatToQImage(const cv::Mat &src, cv::Mat &img) {
 }
 
 static bool equal(const cv::Mat &a, const cv::Mat &b) {
-    if ((a.rows != b.rows) || (a.cols != b.cols))
+    if ((a.rows != b.rows) || (a.cols != b.cols)) {
         return false;
-    cv::Scalar s = sum(a - b);
+    }
+    const cv::Scalar s = sum(a - b);
     return (s[0] == 0) && (s[1] == 0) && (s[2] == 0);
 }
 
@@ -159,20 +159,19 @@ cv::Mat resize(const cv::Mat &imIn,
     cv::Mat result;
 
     switch (arMode) {
-
         case AspectRatioMode::IGNORE_:
             cv::resize(imIn, result, targetSize, 0, 0, mode);
             break;
         case AspectRatioMode::KEEP_CROP: {
-            int inWidth = imIn.cols;
-            int inHeight = imIn.rows;
-            double aspectRatio = double(inWidth) / double(inHeight);
-            int targetWidth = targetSize.width;
-            int targetHeight = targetSize.height;
-            double targetRatio = double(targetWidth) / double(targetHeight);
-
+            const int inWidth = imIn.cols;
+            const int inHeight = imIn.rows;
+            const double aspectRatio = double(inWidth) / double(inHeight);
+            const int targetWidth = targetSize.width;
+            const int targetHeight = targetSize.height;
+            const double targetRatio = double(targetWidth) / double(targetHeight);
             int cropWidth = inWidth;
             int cropHeight = inHeight;
+
             if (aspectRatio > targetRatio) {
                 // need to crop the width
                 cropWidth = targetRatio * inHeight;
@@ -182,14 +181,14 @@ cv::Mat resize(const cv::Mat &imIn,
             }
             cropWidth = std::max(cropWidth, 1);
             cropHeight = std::max(cropHeight, 1);
-            cv::Rect croppedRect(0, 0, cropWidth, cropHeight);
+            const cv::Rect croppedRect(0, 0, cropWidth, cropHeight);
             cv::resize(imIn(croppedRect), result, targetSize, 0, 0, mode);
             break;
         }
         case AspectRatioMode::KEEP_SHRINK: {
             cv::Size newSize = targetSize;
-            double arIn = double(imIn.cols) / double(imIn.rows);
-            double arTarget = double(targetSize.width) / double(targetSize.height);
+            const double arIn = double(imIn.cols) / double(imIn.rows);
+            const double arTarget = double(targetSize.width) / double(targetSize.height);
             if (arIn > 1) {
                 if (arIn > arTarget) {
                     newSize.height = int(std::round(newSize.width / arIn));
@@ -208,8 +207,8 @@ cv::Mat resize(const cv::Mat &imIn,
 
         case AspectRatioMode::KEEP_GROW: {
             cv::Size newSize = targetSize;
-            double arIn = double(imIn.cols) / double(imIn.rows);
-            double arTarget = double(targetSize.width) / double(targetSize.height);
+            const double arIn = double(imIn.cols) / double(imIn.rows);
+            const double arTarget = double(targetSize.width) / double(targetSize.height);
             if (arIn > 1) {
                 if (arIn > arTarget) {
                     newSize.width = int(std::round(newSize.height * arIn));

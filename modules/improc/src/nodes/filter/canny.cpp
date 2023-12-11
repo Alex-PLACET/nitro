@@ -40,9 +40,9 @@ void CannyEdgeDetectionOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> CannyEdgeDetectionOperator::creator(
-        const QString &category) {
-    return [category]() {
+CreatorWithoutParameters CannyEdgeDetectionOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Canny Edge Detector", "cannyEdgeDetect", category);
         return builder.withOperator(std::make_unique<CannyEdgeDetectionOperator>())
                 ->withIcon("blur.png")
@@ -52,7 +52,7 @@ std::function<std::unique_ptr<NitroNode>()> CannyEdgeDetectionOperator::creator(
                 ->withInputValue(INPUT_THRESH_2, 75, 1, 255)
                 ->withInputInteger(INPUT_APERTURE, 3, 3, 7)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

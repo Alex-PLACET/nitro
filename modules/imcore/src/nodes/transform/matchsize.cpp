@@ -20,12 +20,10 @@ void MatchSizeOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-
     const AspectRatioMode arMode = static_cast<AspectRatioMode>(
             nodePorts.getOption(ASPECT_RATIO_DROPDOWN));
     const auto imIn = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     const auto imTarget = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_TARGET);
-
     const int option = nodePorts.getOption(MODE_DROPDOWN);
     cv::InterpolationFlags mode;
     if (option == 0) {
@@ -39,8 +37,9 @@ void MatchSizeOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> MatchSizeOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MatchSizeOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Match Size", "matchSize", category);
         return builder.withOperator(std::make_unique<MatchSizeOperator>())
                 ->withIcon("match_size.png")
@@ -53,7 +52,7 @@ std::function<std::unique_ptr<NitroNode>()> MatchSizeOperator::creator(const QSt
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withInputPort<ColImageData>(INPUT_IMAGE_TARGET)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

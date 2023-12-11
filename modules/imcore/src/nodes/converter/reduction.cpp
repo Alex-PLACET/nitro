@@ -34,13 +34,15 @@ static double minMat(const cv::Mat &in) {
 }
 
 static double maxMat(const cv::Mat &in) {
-    double minValue, maxValue;
+    double minValue = 0;
+    double maxValue = 0;
     std::vector<cv::Mat> channels;
     cv::split(in, channels);
     cv::Point minLoc, maxLoc;
     cv::minMaxLoc(channels[0], &minValue, &maxValue, &minLoc, &maxLoc);
     for (int i = 1; i < channels.size(); i++) {
-        double minValueTemp, maxValueTemp;
+        double minValueTemp = 0;
+        double maxValueTemp = 0;
         cv::minMaxLoc(channels[i], &minValueTemp, &maxValueTemp, &minLoc, &maxLoc);
         minValue = std::min(minValue, minValueTemp);
         maxValue = std::max(maxValue, maxValueTemp);
@@ -50,7 +52,7 @@ static double maxMat(const cv::Mat &in) {
 
 static double sumMat(const cv::Mat &in) {
     double sum = 0;
-    auto scalarSum = cv::sum(in);
+    const auto scalarSum = cv::sum(in);
     for (int i = 0; i < in.channels(); i++) {
         sum += scalarSum[i];
     }
@@ -59,7 +61,7 @@ static double sumMat(const cv::Mat &in) {
 
 static double averageMat(const cv::Mat &in) {
     double sum = 0;
-    auto scalarSum = cv::sum(in);
+    const auto scalarSum = cv::sum(in);
     for (int i = 0; i < in.channels(); i++) {
         sum += scalarSum[i];
     }
@@ -106,7 +108,7 @@ void ReductionOperator::execute(NodePorts &nodePorts) {
         return;
     }
     auto img = *nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-    int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
     switch (option) {
         case 0:
             nodePorts.output<DecimalData>(OUTPUT_VALUE, minMat(img));
@@ -129,8 +131,9 @@ void ReductionOperator::execute(NodePorts &nodePorts) {
     }
 }
 
-std::function<std::unique_ptr<NitroNode>()> ReductionOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ReductionOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Reduction", "reduction", category);
         return builder.withOperator(std::make_unique<ReductionOperator>())
                 ->withIcon("sum.png")
@@ -138,7 +141,7 @@ std::function<std::unique_ptr<NitroNode>()> ReductionOperator::creator(const QSt
                 ->withDropDown(MODE_DROPDOWN, {"Min", "Max", "Sum", "Average", "Count Unique"})
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputValue(OUTPUT_VALUE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

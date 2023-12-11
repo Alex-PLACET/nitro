@@ -2,6 +2,7 @@
 
 #include "nitro/datatypes/colimagedata.hpp"
 
+#include <nitro/core/modules/nitromodule.hpp>
 #include <nitro/core/nodes/datatypes/decimaldata.hpp>
 #include <nitro/core/nodes/datatypes/integerdata.hpp>
 #include <nitro/core/nodes/nitronodebuilder.hpp>
@@ -23,7 +24,7 @@ void ImInfoOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     nodePorts.output<IntegerData>(OUTPUT_WIDTH, im1->cols);
     nodePorts.output<IntegerData>(OUTPUT_HEIGHT, im1->rows);
     nodePorts.output<IntegerData>(OUTPUT_NUM_PIXELS, im1->cols * im1->rows);
@@ -60,8 +61,9 @@ void ImInfoOperator::execute(NodePorts &nodePorts) {
     typeLabel_->setText(QString("Type: %1").arg(type));
 }
 
-std::function<std::unique_ptr<NitroNode>()> ImInfoOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ImInfoOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Image Info", "imInfo", category);
         auto *typeLabel = new QLabel("Type: ");
         return builder.withOperator(std::make_unique<ImInfoOperator>(typeLabel))
@@ -73,7 +75,7 @@ std::function<std::unique_ptr<NitroNode>()> ImInfoOperator::creator(const QStrin
                 ->withOutputInteger(OUTPUT_HEIGHT)
                 ->withOutputInteger(OUTPUT_NUM_PIXELS)
                 ->withOutputValue(OUTPUT_AR)
-                ->build();
+                ->build(converters_register);
     };
 }
 

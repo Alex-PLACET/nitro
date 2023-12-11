@@ -30,7 +30,6 @@ StylePreset getDarkModePalette() {
     palette.setColor(QPalette::Disabled, QPalette::Base, QColor(42, 42, 46));
     palette.setColor(QPalette::Disabled, QPalette::AlternateBase, QColor(45, 45, 48));
     palette.setColor(QPalette::Disabled, QPalette::Window, QColor(52, 52, 55));
-
     StylePreset preset;
     preset.palette = palette;
     return preset;

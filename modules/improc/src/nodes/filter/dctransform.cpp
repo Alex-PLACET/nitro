@@ -26,8 +26,9 @@ void DCTOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> DCTOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters DCTOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Cosine Transform", "dct", category);
         return builder.withOperator(std::make_unique<DCTOperator>())
                 ->withIcon("frequency.png")
@@ -35,7 +36,7 @@ std::function<std::unique_ptr<NitroNode>()> DCTOperator::creator(const QString &
                 ->withInputPort<GrayImageData>(INPUT_IMAGE)
                 ->withCheckBox(OPTION_INVERSE, false)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

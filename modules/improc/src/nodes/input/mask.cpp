@@ -29,7 +29,6 @@ void MaskOperator::execute(NodePorts &nodePorts) {
     const double innerHeight = nodePorts.inputValue(INPUT_MASK_HEIGHT);
     const double posX = nodePorts.inputValue(INPUT_POS_X);
     const double posY = nodePorts.inputValue(INPUT_POS_Y);
-
     const int kernelWidth = int(std::round(innerWidth * width / 2.0));
     const int kernelHeight = int(std::round(innerHeight * height / 2.0));
     const cv::Mat image(height, width, CV_8UC1, cv::Scalar(0));
@@ -54,12 +53,12 @@ void MaskOperator::execute(NodePorts &nodePorts) {
 
     cv::Mat result;
     image.convertTo(result, CV_32FC1, 1 / 255.0);
-
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> MaskOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MaskOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Mask", "mask", category);
         return builder.withOperator(std::make_unique<MaskOperator>())
                 ->withIcon("mask.png")
@@ -72,7 +71,7 @@ std::function<std::unique_ptr<NitroNode>()> MaskOperator::creator(const QString 
                 ->withInputValue(INPUT_POS_X, 0.5, 0, 1, BoundMode::UNCHECKED)
                 ->withInputValue(INPUT_POS_Y, 0.5, 0, 1, BoundMode::UNCHECKED)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

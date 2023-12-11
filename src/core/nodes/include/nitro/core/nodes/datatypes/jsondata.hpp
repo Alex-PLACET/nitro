@@ -30,11 +30,6 @@ public:
     static QString id() { return id_; }
 
     /**
-     * @brief Registers the conversions that this data type allows.
-     */
-    static void registerConversions();
-
-    /**
      * @brief Retrieves the description of this data type.
      * @return The description of this data type.
      */

@@ -138,11 +138,11 @@ bool NodeDockWidget::canQuitSafely() {
     if (prevSave_ == dataFlowGraphModel_->save()) {
         return true;
     }
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this,
-                                  "Save changes",
-                                  QString("Save changes before closing?\n%1").arg(filename_),
-                                  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    const QMessageBox::StandardButton reply = QMessageBox::question(
+            this,
+            "Save changes",
+            QString("Save changes before closing?\n%1").arg(filename_),
+            QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
     if (reply == QMessageBox::Yes) {
         saveModel();
     } else if (reply == QMessageBox::Cancel) {
@@ -167,12 +167,11 @@ void NodeDockWidget::saveModel(bool askFile) {
         filePath = saveFilePath;
     }
     auto saveObject = dataFlowGraphModel_->save();
-    QFile jsonFile(filePath);
-    if (jsonFile.open(QFile::WriteOnly)) {
+    if (QFile jsonFile(filePath); jsonFile.open(QFile::WriteOnly)) {
         QJsonDocument document;
         document.setObject(saveObject);
         jsonFile.write(document.toJson());
-        prevSave_ = saveObject;
+        prevSave_ = std::move(saveObject);
     } else {
         QMessageBox::warning(this, "Failed to open file", filePath);
     }
@@ -182,10 +181,10 @@ void NodeDockWidget::loadModel() {
     if (!canQuitSafely()) {
         return;
     }
-    QString filePath = QFileDialog::getOpenFileName(this,
-                                                    "Load NITRO Config",
-                                                    "../data/",
-                                                    tr("Json Files (*.json)"));
+    const QString filePath = QFileDialog::getOpenFileName(this,
+                                                          "Load NITRO Config",
+                                                          "../data/",
+                                                          tr("Json Files (*.json)"));
     if (filePath == "") {
         return;
     }
@@ -196,7 +195,7 @@ void NodeDockWidget::loadModel() {
     saveFilePath = filePath;
 
     jsonFile.open(QFile::ReadOnly);
-    auto doc = QJsonDocument::fromJson(jsonFile.readAll());
+    const auto doc = QJsonDocument::fromJson(jsonFile.readAll());
     clearModel();
     dataFlowGraphModel_->load(doc.object());
     prevSave_ = dataFlowGraphModel_->save();

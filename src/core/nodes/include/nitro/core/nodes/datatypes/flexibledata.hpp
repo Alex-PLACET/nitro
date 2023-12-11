@@ -31,7 +31,7 @@ public:
      * @param color The color associated with this data type.
      */
     explicit FlexibleData(T val, const QString &id, const QString &name, QColor color)
-        : data_(val),
+        : data_(std::move(val)),
           type_({id, name, color}) {}
 
     /**
@@ -44,34 +44,7 @@ public:
      * @brief Retrieves the data encapsulated by this class.
      * @return The data encapsulated by this class.
      */
-    [[nodiscard]] T data() const { return data_; }
-
-    /**
-     * @brief Retrieve data of type T from the provided node data.
-     * Only possible if a conversion is registered between the type encapsulated by the parameter data and this type.
-     * @param data The data to convert to type T.
-     * @return The converted data.
-     */
-    [[nodiscard]] static T from(const std::shared_ptr<QtNodes::NodeData> &data) {
-        if (data == nullptr) {
-            throw std::invalid_argument("Data is null.\n");
-        }
-
-        QString id = data->type().id;
-        if (conversions.count(id) == 0) {
-            throw std::invalid_argument(
-                    QString("Conversion from %1 is not supported. Id %2 not found.\n")
-                            .arg(data->type().name, id)
-                            .toStdString());
-        }
-        return conversions[id](data);
-    }
-
-    /**
-     * @brief Allow the type with the provided id to be converted to this data type.
-     * @param id The id of the data type to allow the conversion from.
-     */
-    void allowConversionFrom(const QString &id) final { type_.allowedFromConversions.insert(id); }
+    [[nodiscard]] const T &data() const noexcept { return data_; }
 
     /**
      * @brief Checks whether the data is empty or not.
@@ -85,25 +58,7 @@ public:
      */
     [[nodiscard]] QtNodes::NodeDataType type() const override { return type_; }
 
-protected:
-    /**
-     * @brief Registers a function that can convert from type A to B, where B is the data type described by the class that this method is called on.
-     * Only one conversion function can exist per type of A.
-     * @param V The type of the data that is being converted (i.e. type A).
-     * @param conversion The conversion function that specifies how to convert from A to B.
-     */
-    template<class V>
-    static void registerConversionFrom(
-            std::function<T(const std::shared_ptr<QtNodes::NodeData> &)> conversion) {
-        QString id = V::id();
-        conversions[id] = std::move(conversion);
-    }
-
 private:
-    inline static std::unordered_map<QString,
-                                     std::function<T(const std::shared_ptr<QtNodes::NodeData> &)>>
-            conversions;
-
     T data_;
     QtNodes::NodeDataType type_;
 };

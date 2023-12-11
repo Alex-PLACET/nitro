@@ -16,7 +16,7 @@ void InvertOperator::execute(NodePorts &nodePorts) {
         return;
     }
 
-    auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const auto inputImg = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     cv::Mat result = cv::abs(1 - *inputImg);
     if (inputImg->channels() == 1) {
         result = cv::abs(1 - *inputImg);
@@ -33,15 +33,16 @@ void InvertOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> InvertOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters InvertOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Invert", "invert", category);
         return builder.withOperator(std::make_unique<InvertOperator>())
                 ->withIcon("invert.png")
                 ->withNodeColor(NITRO_CONVERTER_COLOR)
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

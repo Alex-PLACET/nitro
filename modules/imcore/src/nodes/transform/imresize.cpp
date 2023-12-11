@@ -21,14 +21,12 @@ void ResizeOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-
     const AspectRatioMode arMode = static_cast<AspectRatioMode>(
             nodePorts.getOption(ASPECT_RATIO_DROPDOWN));
     const int option = nodePorts.getOption(MODE_DROPDOWN);
     const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     const int width = nodePorts.inputInteger(INPUT_X);
     const int height = nodePorts.inputInteger(INPUT_Y);
-
     cv::InterpolationFlags mode;
     if (option == 0) {
         mode = cv::INTER_LINEAR;
@@ -41,8 +39,9 @@ void ResizeOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ResizeOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ResizeOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Resize", "resize", category);
         return builder.withOperator(std::make_unique<ResizeOperator>())
                 ->withIcon("resize.png")
@@ -56,7 +55,7 @@ std::function<std::unique_ptr<NitroNode>()> ResizeOperator::creator(const QStrin
                 ->withInputInteger(INPUT_X, 256, 2, 2048, BoundMode::LOWER_ONLY)
                 ->withInputInteger(INPUT_Y, 256, 2, 2048, BoundMode::LOWER_ONLY)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

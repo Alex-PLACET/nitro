@@ -48,7 +48,7 @@ public:
      * @param widget The display widget for this node as constructed by the builder.
      */
     void init(QtNodes::NodeInfo info,
-              const NodePorts &nodePorts,
+              NodePorts nodePorts,
               std::unique_ptr<NodeOperator> op,
               QWidget *widget);
 
@@ -74,7 +74,7 @@ public:
      * @brief Retrieves the widget displayed in this node.
      * @return The widget displayed in this node.
      */
-    QWidget *embeddedWidget() override;
+    [[nodiscard]] QWidget *embeddedWidget() override;
 
     /**
      * @brief Retrieves the node info.
@@ -102,7 +102,7 @@ public Q_SLOTS:
     void inputConnectionDeleted(const QtNodes::ConnectionId &) override;
 
 protected:
-    [[nodiscard]] unsigned int nPorts(QtNodes::PortType portType) const override;
+    [[nodiscard]] size_t nPorts(QtNodes::PortType portType) const override;
 
     [[nodiscard]] QtNodes::NodeDataType dataType(QtNodes::PortType portType,
                                                  QtNodes::PortIndex portIndex) const override;
@@ -140,9 +140,9 @@ private:
 
     void connectSourceValue(ValueSliders::DoubleSlider *slider, int port);
 
-    [[nodiscard]] QString getInPortKey(unsigned int portIndex) const;
+    [[nodiscard]] QString getInPortKey(QtNodes::PortIndex portIndex) const;
 
-    [[nodiscard]] QString getOutPortKey(unsigned int portIndex) const;
+    [[nodiscard]] QString getOutPortKey(QtNodes::PortIndex portIndex) const;
 
     void connectLabel(const QString &name, QLabel *label);
 

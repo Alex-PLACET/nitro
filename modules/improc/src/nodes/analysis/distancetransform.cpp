@@ -82,9 +82,9 @@ void DistanceTransformOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> DistanceTransformOperator::creator(
-        const QString &category) {
-    return [category]() {
+CreatorWithoutParameters DistanceTransformOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Distance Transform", "distanceTransform", category);
         return builder.withOperator(std::make_unique<DistanceTransformOperator>())
                 ->withIcon("distance.png")
@@ -95,7 +95,7 @@ std::function<std::unique_ptr<NitroNode>()> DistanceTransformOperator::creator(
                 ->withCheckBox(OPTION_SIGNED, false)
                 ->withCheckBox(OPTION_NORMALIZE, false)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

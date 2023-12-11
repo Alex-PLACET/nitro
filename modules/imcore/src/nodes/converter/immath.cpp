@@ -102,7 +102,7 @@ void MathOperator::execute(NodePorts &nodePorts) {
     }
 
     // TODO: only update when changed
-    int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
     if (nodePorts.allInputOfType<DecimalData>()) {
         const double facDouble = nodePorts.inputValue(INPUT_FAC);
         const double in1 = nodePorts.inputValue(INPUT_VALUE_1);
@@ -164,35 +164,21 @@ void MathOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_VALUE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> MathOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MathOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Math", "math", category);
         return builder.withOperator(std::make_unique<MathOperator>())
                 ->withIcon("math.png")
                 ->withNodeColor(NITRO_CONVERTER_COLOR)
                 ->withDropDown(MODE_DROPDOWN,
                                {"Add", "Subtract", "Multiply", "Divide", "Min", "Max", "Log"})
-                ->withInputValue(INPUT_FAC,
-                                 1,
-                                 0,
-                                 1,
-                                 BoundMode::UPPER_LOWER,
-                                 {ColImageData::id(), GrayImageData::id()})
-                ->withInputValue(INPUT_VALUE_1,
-                                 0.5,
-                                 0,
-                                 1,
-                                 BoundMode::UNCHECKED,
-                                 {ColImageData::id(), GrayImageData::id()})
-                ->withInputValue(INPUT_VALUE_2,
-                                 0.5,
-                                 0,
-                                 1,
-                                 BoundMode::UNCHECKED,
-                                 {ColImageData::id(), GrayImageData::id()})
+                ->withInputValue(INPUT_FAC, 1, 0, 1, BoundMode::UPPER_LOWER)
+                ->withInputValue(INPUT_VALUE_1, 0.5, 0, 1, BoundMode::UNCHECKED)
+                ->withInputValue(INPUT_VALUE_2, 0.5, 0, 1, BoundMode::UNCHECKED)
                 ->withOutputValue(OUTPUT_VALUE)
                 ->withCheckBox(OPTION_CLAMP, false)
-                ->build();
+                ->build(converters_register);
     };
 }
 

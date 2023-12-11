@@ -15,13 +15,4 @@ QString PathData::getDescription() const {
     return QString::fromStdWString(data().wstring());
 }
 
-void PathData::registerConversions() {
-
-    // Every type needs a "conversion" to itself
-    PathData::registerConversionFrom<PathData>(
-            [](const std::shared_ptr<QtNodes::NodeData> &nodeData) {
-                return std::static_pointer_cast<PathData>(nodeData)->data();
-            });
-}
-
 } // namespace nitro

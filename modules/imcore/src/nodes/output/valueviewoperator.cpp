@@ -24,8 +24,9 @@ void ValueViewOperator::execute(NodePorts &nodePorts) {
     }
 }
 
-std::function<std::unique_ptr<NitroNode>()> ValueViewOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ValueViewOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Value Display", "valueViewer", category);
         auto *valueLabel = new QLabel("-");
         return builder.withOperator(std::make_unique<ValueViewOperator>(valueLabel))
@@ -33,7 +34,7 @@ std::function<std::unique_ptr<NitroNode>()> ValueViewOperator::creator(const QSt
                 ->withDisplayWidget(DISPLAY_LABEL, valueLabel)
                 ->withNodeColor(NITRO_OUTPUT_COLOR)
                 ->withInputPort<DecimalData>(INPUT_VALUE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

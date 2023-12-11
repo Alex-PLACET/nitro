@@ -47,7 +47,7 @@ public Q_SLOTS:
     void dropEvent(QDropEvent *event) override;
 
 private:
-    QtNodes::NodeId nodeBeingViewed_;
+    QtNodes::NodeId nodeBeingViewed_ = QtNodes::InvalidNodeId;
     QtNodes::PortIndex currentPort_ = 0;
     std::shared_ptr<NodeRegistry> &nodes_;
 

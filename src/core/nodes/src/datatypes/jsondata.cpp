@@ -13,12 +13,4 @@ QString JsonData::getDescription() const {
     return QJsonDocument(data()).toJson();
 }
 
-void JsonData::registerConversions() {
-    // Every type needs a "conversion" to itself
-    JsonData::registerConversionFrom<JsonData>(
-            [](const std::shared_ptr<QtNodes::NodeData> &nodeData) {
-                return std::static_pointer_cast<JsonData>(nodeData)->data();
-            });
-}
-
 } // namespace nitro

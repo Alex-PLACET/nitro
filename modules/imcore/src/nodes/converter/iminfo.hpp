@@ -1,7 +1,9 @@
 #pragma once
 
 #include <nitro/core/nodes/nitronode.hpp>
+#include <nitro/core/nodes/node_creator.hpp>
 #include <nitro/core/nodes/nodeoperator.hpp>
+
 
 namespace nitro::ImCore {
 
@@ -9,7 +11,7 @@ class ImInfoOperator : public NodeOperator {
 public:
     ImInfoOperator(QLabel *typeLabel);
 
-    static std::function<std::unique_ptr<NitroNode>()> creator(const QString &category);
+    static CreatorWithoutParameters creator(const QString &category);
 
     void execute(NodePorts &nodePorts) override;
 

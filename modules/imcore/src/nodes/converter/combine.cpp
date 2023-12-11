@@ -32,8 +32,9 @@ void CombineOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> CombineOperator::creator(const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters CombineOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Combine Channels", "combineChannels", category);
         return builder.withOperator(std::make_unique<CombineOperator>())
                 ->withIcon("layers.png")
@@ -42,7 +43,7 @@ std::function<std::unique_ptr<NitroNode>()> CombineOperator::creator(const QStri
                 ->withInputPort<GrayImageData>("Channel 2")
                 ->withInputPort<GrayImageData>("Channel 3")
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

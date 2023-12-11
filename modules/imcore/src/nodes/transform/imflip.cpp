@@ -16,8 +16,8 @@ void ImFlipOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int option = nodePorts.getOption(MODE_DROPDOWN);
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
 
     int mode;
     switch (option) {
@@ -37,8 +37,9 @@ void ImFlipOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ImFlipOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ImFlipOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Flip", "ImFlip", category);
         return builder.withOperator(std::make_unique<ImFlipOperator>())
                 ->withIcon("flip.png")
@@ -46,7 +47,7 @@ std::function<std::unique_ptr<NitroNode>()> ImFlipOperator::creator(const QStrin
                 ->withDropDown(MODE_DROPDOWN, {"Horizontal", "Vertical", "Diagonal"})
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

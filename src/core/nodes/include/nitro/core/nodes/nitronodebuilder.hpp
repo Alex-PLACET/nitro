@@ -7,6 +7,7 @@
 #include <QColor>
 #include <QLabel>
 #include <QString>
+#include <QtNodes/ConvertersRegister>
 #include <set>
 #include <valueslider.hpp>
 
@@ -36,7 +37,8 @@ public:
      * @brief Creates the node as configured.
      * @return A new node.
      */
-    std::unique_ptr<NitroNode> build();
+    std::unique_ptr<NitroNode> build(
+            const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register);
 
     /**
      * @brief Adds an operator to the node. The operator is what is executed when a node is being evaluated.
@@ -79,31 +81,6 @@ public:
     }
 
     /**
-     * @brief Gives the node an input port that takes inputs of type T. The port, however, also accepts any data type with the id present in the allowedConversions list.
-     * @see nitro::NodePorts#inputInteger
-     * @see nitro::NodePorts#inputValue
-     * @see nitro::NodePorts#inGet
-     * @see nitro::NodePorts#inGetAs
-     * @see nitro::NodePorts#getInData
-     * Note that this does not perform the actual conversions, it simply allows for the port to accept these types.
-     * @tparam T The input type. Should be one of the data types (e.g. subtype of NodeDataType or FlexibleData). @see nitro::FlexibleData.
-     * @param name The name of the port. Should be unique amongst the input ports, since this is used to retrieve the corresponding data.
-     * @param allowedConversions The type IDs of the data types this port should also be able to accept.
-     * @return The updated builder.
-     */
-    template<class T>
-    NitroNodeBuilder *withInputPort(const QString &name,
-                                    std::initializer_list<QString> allowedConversions) {
-        QtNodes::NodeDataType imDataType = T().type();
-        for (auto &type: allowedConversions) {
-            imDataType.allowedFromConversions.insert(type);
-        }
-        inputList_.emplace_back(name, imDataType);
-        addInPortWidget(new QLabel(name));
-        return this;
-    }
-
-    /**
      * @brief Unique variation of withInputPort for integer types. Adds a slider widget to the node itself.
      * @see nitro::NodePorts#inputInteger
      * @see nitro::NodePorts#inGet
@@ -121,8 +98,7 @@ public:
                                        int defaultVal,
                                        int min,
                                        int max,
-                                       BoundMode boundMode = BoundMode::UPPER_LOWER,
-                                       std::initializer_list<QString> allowedConversions = {});
+                                       BoundMode boundMode = BoundMode::UPPER_LOWER);
 
     /**
      * @brief Unique variation of withInputPort for double types. Adds a slider widget to the node itself.
@@ -142,8 +118,7 @@ public:
                                      double defaultVal,
                                      double min,
                                      double max,
-                                     BoundMode boundMode = BoundMode::UPPER_LOWER,
-                                     std::initializer_list<QString> allowedConversions = {});
+                                     BoundMode boundMode = BoundMode::UPPER_LOWER);
 
     /**
      * @brief Gives the node an output port that produces outputs of type T. Note that this type could be changed by the node operator if necessary.
@@ -168,9 +143,12 @@ public:
      * @see nitro::NodePorts#getGlobalProperty
      * @param name The name of the button. Should be unique amongst the options, since this is used to retrieve the corresponding data.
      * @param filters File filters associated with the type that should be loaded.
+     * @param outputName The name of the output port that should be set with the loaded data.
      * @return The updated builder.
      */
-    NitroNodeBuilder *withLoadButton(const QString &name, const QString &filters);
+    NitroNodeBuilder *withLoadButton(const QString &name,
+                                     const QString &filters,
+                                     const QString &outputName);
 
     /**
      * @brief Adds an output port producing integers to the node.
@@ -312,13 +290,9 @@ private:
 
     void addOptionWidget(QWidget *widget);
 
-    void initInputValue(const QString &name,
-                        ValueSliders::IntSlider *slider,
-                        std::initializer_list<QString> list);
+    void initInputValue(const QString &name, ValueSliders::IntSlider *slider);
 
-    void initInputVal(const QString &name,
-                      ValueSliders::DoubleSlider *slider,
-                      std::initializer_list<QString> list);
+    void initInputVal(const QString &name, ValueSliders::DoubleSlider *slider);
 };
 
 } // namespace nitro

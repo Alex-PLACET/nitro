@@ -1,5 +1,6 @@
 #include "nitro/gui/nodeeditor/imgnodegraphicsview.hpp"
 
+#include "QtNodes/internal/ConvertersRegister.hpp"
 #include "nitro/util/imgresourcereader.hpp"
 
 #include <QAction>
@@ -26,7 +27,6 @@ ImageNodeGraphicsView::ImageNodeGraphicsView(std::shared_ptr<NodeRegistry> &node
                                              QtNodes::DataFlowGraphModel *model,
                                              QWidget *parent)
     : NodeGraphicsView(scene, model, parent),
-      nodeBeingViewed_(QtNodes::InvalidNodeId),
       nodes_(nodes) {
     setAcceptDrops(true);
 }
@@ -35,13 +35,13 @@ QAction *ImageNodeGraphicsView::spawnNodeAction(const QtNodes::NodeInfo &info) {
     const QString &menuName = info.getNodeName();
     const QString &nodeType = info.getNodeId();
     const QString &iconPath = info.getIconPath();
-    QColor icColor = info.getNodeColor();
+    const QColor icColor = info.getNodeColor();
     auto *createNodeAction = new QAction(menuName, this);
     QObject::connect(createNodeAction, &QAction::triggered, [this, nodeType]() {
         // Mouse position in scene coordinates.
-        QPoint globalPos = mapFromGlobal(QCursor::pos());
+        const QPoint globalPos = mapFromGlobal(QCursor::pos());
         if (rect().contains(globalPos)) {
-            QPointF posView = mapToScene(globalPos);
+            const QPointF posView = mapToScene(globalPos);
             scene_->undoStack().push(new QtNodes::CreateCommand(scene_, nodeType, posView));
         }
     });
@@ -53,7 +53,7 @@ QAction *ImageNodeGraphicsView::spawnNodeAction(const QtNodes::NodeInfo &info) {
 
 QMenu *ImageNodeGraphicsView::initNodeMenu() {
     auto *menu = new QMenu(this);
-    const int padding = 12;
+    constexpr int padding = 12;
     menu->setContentsMargins(padding, padding, padding, padding);
 
     QAction *sectionTitle = menu->addSection("Add");
@@ -73,13 +73,12 @@ QMenu *ImageNodeGraphicsView::initNodeMenu() {
     //    menu->addAction(txtBoxAction);
     menu->addSeparator();
 
-    auto categories = nodes_->getCategories();
+    const auto categories = nodes_->getCategories();
 
     // TODO: treeview
-    for (const auto &category: categories) {
-        auto *subMenu = new QMenu(category.first);
-        auto nodeInfos = category.second;
-        for (auto &info: nodeInfos) {
+    for (const auto &[key, nodeInfos]: categories) {
+        auto *subMenu = new QMenu(key);
+        for (const auto &info: nodeInfos) {
             subMenu->addAction(spawnNodeAction(info));
         }
         menu->addMenu(subMenu);
@@ -94,9 +93,9 @@ void ImageNodeGraphicsView::spawnViewerNodeAt(int x, int y) {
     QGraphicsItem *item = itemAt(x, y);
     // Update position of current selected node?
     if (item != nullptr) {
-
         QtNodes::NodeGraphicsObject *ngo;
         ngo = qgraphicsitem_cast<QtNodes::NodeGraphicsObject *>(item);
+
         while (!ngo) {
             if (item == nullptr) {
                 return;
@@ -104,14 +103,14 @@ void ImageNodeGraphicsView::spawnViewerNodeAt(int x, int y) {
             item = item->parentItem();
             ngo = qgraphicsitem_cast<QtNodes::NodeGraphicsObject *>(item);
         }
-        if (auto c = qgraphicsitem_cast<QtNodes::NodeGraphicsObject *>(item)) {
 
+        if (auto c = qgraphicsitem_cast<QtNodes::NodeGraphicsObject *>(item)) {
             QtNodes::NodeId viewerNodeId = QtNodes::InvalidNodeId;
-            auto allNodes = dataModel_->allNodeIds();
+            const auto allNodes = dataModel_->allNodeIds();
             //TODO extract this magic string
             // TODO: Extract global map somewhere that supports all viewers
             // Loop over the ports and check if there is a viewer node available for said port
-            QString viewerNodeName = "ImageViewer";
+            const QString viewerNodeName = "ImageViewer";
             for (auto id: allNodes) {
                 if (viewerNodeName ==
                     dataModel_->nodeData(id, QtNodes::NodeRole::Type).value<QString>()) {
@@ -122,36 +121,38 @@ void ImageNodeGraphicsView::spawnViewerNodeAt(int x, int y) {
             QtNodes::CreateCommand *createCommand = nullptr;
             if (!dataModel_->nodeExists(viewerNodeId)) {
                 // Spawn viewer node
-                QPointF posView(c->pos().x() + c->boundingRect().width() * 2,
-                                c->pos().y() + c->boundingRect().height() / 4);
+                const QPointF posView(c->pos().x() + c->boundingRect().width() * 2,
+                                      c->pos().y() + c->boundingRect().height() / 4);
                 createCommand = new QtNodes::CreateCommand(scene_, viewerNodeName, posView);
                 scene_->undoStack().push(createCommand);
                 viewerNodeId = createCommand->getNodeId();
             }
-            auto viewerType = dataModel_
-                                      ->portData(viewerNodeId,
-                                                 QtNodes::PortType::In,
-                                                 0,
-                                                 QtNodes::PortRole::DataType)
-                                      .value<QtNodes::NodeDataType>();
-
-            auto const &cid = c->nodeId();
+            const auto viewerType = dataModel_
+                                            ->portData(viewerNodeId,
+                                                       QtNodes::PortType::In,
+                                                       0,
+                                                       QtNodes::PortRole::DataType)
+                                            .value<QtNodes::NodeDataType>();
+            const auto &cid = c->nodeId();
             if (viewerNodeName ==
                 dataModel_->nodeData(cid, QtNodes::NodeRole::Type).value<QString>()) {
                 return;
             }
             // Find a suitable port to view; multiple clicks will cycle through the ports
             if (nodeBeingViewed_ == cid) {
-                int numPorts = dataModel_->nodeData(cid, QtNodes::NodeRole::OutPortCount).toInt();
+                const int numPorts = dataModel_->nodeData(cid, QtNodes::NodeRole::OutPortCount)
+                                             .toInt();
                 for (int i = 0; i < numPorts; ++i) {
                     currentPort_++;
-                    auto pData = dataModel_
-                                         ->portData(nodeBeingViewed_,
-                                                    QtNodes::PortType::Out,
-                                                    currentPort_,
-                                                    QtNodes::PortRole::DataType)
-                                         .value<QtNodes::NodeDataType>();
-                    if (pData.id == viewerType.id || viewerType.allowConversionFrom(pData.id)) {
+                    const auto pData = dataModel_
+                                               ->portData(nodeBeingViewed_,
+                                                          QtNodes::PortType::Out,
+                                                          currentPort_,
+                                                          QtNodes::PortRole::DataType)
+                                               .value<QtNodes::NodeDataType>();
+                    if (pData.id == viewerType.id ||
+                        nodes_->getRegistry()->convertersRegister()->contains(
+                                QtNodes::FromToTypes(pData.id, viewerType.id))) {
                         break;
                     }
                     if (pData.id == QtNodes::InvalidData().type().id) {
@@ -161,20 +162,19 @@ void ImageNodeGraphicsView::spawnViewerNodeAt(int x, int y) {
             } else {
                 currentPort_ = 0;
             }
-            QtNodes::ConnectionId connectionId = {.outNodeId = cid,
-                                                  .outPortIndex = currentPort_,
-                                                  .inNodeId = viewerNodeId,
-                                                  .inPortIndex = 0};
+            const QtNodes::ConnectionId connectionId = {.outNodeId = cid,
+                                                        .outPortIndex = currentPort_,
+                                                        .inNodeId = viewerNodeId,
+                                                        .inPortIndex = 0};
             if (dataModel_->connectionPossible(connectionId)) {
-
-                QtNodes::NodeId const nodeId = getNodeId(QtNodes::PortType::In, connectionId);
-                QtNodes::PortIndex const portIndex = getPortIndex(QtNodes::PortType::In,
+                const QtNodes::NodeId nodeId = getNodeId(QtNodes::PortType::In, connectionId);
+                const QtNodes::PortIndex portIndex = getPortIndex(QtNodes::PortType::In,
                                                                   connectionId);
-                auto const connections = dataModel_->connections(nodeId,
+                const auto connections = dataModel_->connections(nodeId,
                                                                  QtNodes::PortType::In,
                                                                  portIndex);
                 // Delete existing connections from viewer node
-                for (auto &con: connections) {
+                for (const auto &con: connections) {
                     dataModel_->deleteConnection(con);
                 }
                 dataModel_->addConnection(connectionId);
@@ -207,25 +207,24 @@ void ImageNodeGraphicsView::mouseDoubleClickEvent(QMouseEvent *event) {
 
 void ImageNodeGraphicsView::dropEvent(QDropEvent *event) {
     if (event->mimeData()->hasUrls()) {
-        QList<QUrl> urls = event->mimeData()->urls();
+        const QList<QUrl> urls = event->mimeData()->urls();
         if (!urls.isEmpty()) {
-            QString filePath = urls.first().toLocalFile();
+            const QString filePath = urls.first().toLocalFile();
             // Process the file path as needed
-            QPointF posView = mapToScene(mapFromGlobal(QCursor::pos()));
+            const QPointF posView = mapToScene(mapFromGlobal(QCursor::pos()));
             //TODO: definitely refactor this; quite hardcoded at the moment
-            QString sourceNodeName = "ImageSource";
-            auto createCommand = new QtNodes::CreateCommand(scene_, sourceNodeName, posView);
+            const QString sourceNodeName = "ImageSource";
+            const auto createCommand = new QtNodes::CreateCommand(scene_, sourceNodeName, posView);
             scene_->undoStack().push(createCommand);
-            auto sourceNodeId = createCommand->getNodeId();
-            auto json = dataModel_->saveNode(sourceNodeId);
-            QJsonObject internalData = json["internal-data"].toObject();
-            QJsonObject properties = internalData["properties"].toObject();
+            const auto sourceNodeId = createCommand->getNodeId();
+            const auto json = dataModel_->saveNode(sourceNodeId);
+            const QJsonObject internalData = json["internal-data"].toObject();
+            const QJsonObject properties = internalData["properties"].toObject();
             properties["Out 0"] = filePath;
             internalData["properties"] = properties;
             json["internal-data"] = internalData;
             dataModel_->deleteNode(sourceNodeId);
             dataModel_->loadNode(json);
-
             QApplication::restoreOverrideCursor();
         }
     }

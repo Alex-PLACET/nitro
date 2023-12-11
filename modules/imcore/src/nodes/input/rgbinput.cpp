@@ -34,8 +34,9 @@ void RgbOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_COL, col);
 }
 
-std::function<std::unique_ptr<NitroNode>()> RgbOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters RgbOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("RGB", "rgb", category);
         QLabel *colLabel = new QLabel();
         return builder.withOperator(std::make_unique<RgbOperator>(colLabel))
@@ -46,7 +47,7 @@ std::function<std::unique_ptr<NitroNode>()> RgbOperator::creator(const QString &
                 ->withInputValue(INPUT_G, .5, 0, 1, BoundMode::UPPER_LOWER)
                 ->withInputValue(INPUT_B, .5, 0, 1, BoundMode::UPPER_LOWER)
                 ->withOutputPort<ColImageData>(OUTPUT_COL)
-                ->build();
+                ->build(converters_register);
     };
 }
 

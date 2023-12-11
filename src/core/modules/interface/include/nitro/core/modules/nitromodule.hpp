@@ -1,19 +1,12 @@
 #pragma once
 
+#include <QtNodes/ConvertersRegister>
 #include <QtPlugin>
-#include <functional>
+#include <nitro/core/nodes/node_creator.hpp>
 #include <variant>
 #include <vector>
 
 namespace nitro {
-
-class MainWindow;
-
-class NitroNode;
-
-using CreatorWithoutParameters = std::function<std::unique_ptr<NitroNode>()>;
-using CreatorWithWindow = std::function<CreatorWithoutParameters(MainWindow *window)>;
-using CreatorVariant = std::variant<CreatorWithWindow, CreatorWithoutParameters>;
 
 /**
  * @brief Defines a generic module interface that any newly created module should inherit from.
@@ -32,10 +25,10 @@ public:
     virtual std::vector<CreatorVariant> registerNodes() = 0;
 
     /**
-     * @brief Used to register new data types. If amodule introduces new data types, this function should be implemented.
+     * @brief Used to register new data types. If a module introduces new data types, this function should be implemented.
      * Note that the conversion registration is done via the static methods in the corresponding data classes.
      */
-    virtual void registerDataTypes() = 0;
+    virtual QtNodes::ConvertersRegister registerDataTypes() = 0;
 };
 
 } // namespace nitro

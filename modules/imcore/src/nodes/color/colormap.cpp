@@ -32,27 +32,24 @@ ColorMapOperator::ColorMapOperator(QLabel *displayLabel) : displayLabel_(display
 void ColorMapOperator::execute(NodePorts &nodePorts) {
     const int option = nodePorts.getOption(OPTION_DROPDOWN);
     const auto colormapType = static_cast<cv::ColormapTypes>(option);
-    const cv::Mat mapLabel = createGradientImage(200, 20);
+    cv::Mat mapLabel = createGradientImage(200, 20);
     cv::applyColorMap(mapLabel, mapLabel, colormapType);
     displayLabel_->setPixmap(QPixmap::fromImage(cvMatToQImage(mapLabel, displayImage_)));
-
     if (!nodePorts.allInputsPresent()) {
         return;
     }
     const auto img = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    cv::Mat result;
-
     cv::Mat imIn;
     img->convertTo(imIn, CV_8U, 255);
-
+    cv::Mat result;
     cv::applyColorMap(imIn, result, colormapType);
     result.convertTo(result, CV_32F, 1 / 255.0);
-
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ColorMapOperator::creator(const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters ColorMapOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Apply Color Map", "colorMap", category);
         auto *displayLabel = new QLabel();
         return builder.withOperator(std::make_unique<ColorMapOperator>(displayLabel))
@@ -67,7 +64,7 @@ std::function<std::unique_ptr<NitroNode>()> ColorMapOperator::creator(const QStr
                                 "Turbo",  "Deep green"})
                 ->withDisplayWidget(DISPLAY_LABEL, displayLabel)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

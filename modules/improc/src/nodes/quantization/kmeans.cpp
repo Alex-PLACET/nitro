@@ -19,7 +19,7 @@ static inline int findClosestMean(const std::vector<float> &means, int k, int va
     int meanIdx = 0;
     float curDistance = std::abs(val - means[0]);
     for (int i = 1; i < k; i++) {
-        float dist = std::abs(val - means[i]);
+        const float dist = std::abs(val - means[i]);
         if (dist < curDistance) {
             curDistance = dist;
             meanIdx = i;
@@ -83,10 +83,9 @@ static std::vector<uint64_t> getHistogram(const cv::Mat &src) {
 }
 
 cv::Mat kMeansHist(const cv::Mat &image, int numColors, int maxIter) {
-
     cv::Mat img;
     image.convertTo(img, CV_8UC1, 255.0);
-    auto hist = getHistogram(img);
+    const auto hist = getHistogram(img);
 
     std::vector<float> centers;
     std::vector<int> labels;
@@ -161,8 +160,9 @@ void KMeansOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, kMeansDat);
 }
 
-std::function<std::unique_ptr<NitroNode>()> KMeansOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters KMeansOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("K-Means", "kMeans", category);
         return builder.withOperator(std::make_unique<KMeansOperator>())
                 ->withIcon("quantize.png")
@@ -171,7 +171,7 @@ std::function<std::unique_ptr<NitroNode>()> KMeansOperator::creator(const QStrin
                 ->withInputInteger(INPUT_MAX_ITER, 20, 1, 50, BoundMode::LOWER_ONLY)
                 ->withInputInteger(INPUT_K, 8, 2, 255)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

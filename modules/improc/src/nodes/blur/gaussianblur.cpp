@@ -27,8 +27,9 @@ void GaussianBlurOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> GaussianBlurOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters GaussianBlurOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Gaussian Blur", "gaussianFilter", category);
         return builder.withOperator(std::make_unique<GaussianBlurOperator>())
                 ->withIcon("blur.png")
@@ -38,7 +39,7 @@ std::function<std::unique_ptr<NitroNode>()> GaussianBlurOperator::creator(const 
                 ->withInputInteger(INPUT_SIZE, 64, 1, 256, BoundMode::LOWER_ONLY)
                 ->withInputValue(INPUT_SIGMA, 32, 0, 128, BoundMode::LOWER_ONLY)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

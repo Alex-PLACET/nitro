@@ -25,8 +25,9 @@ void FFTOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> FFTOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters FFTOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Fourier Transform", "fft", category);
         return builder.withOperator(std::make_unique<FFTOperator>())
                 ->withIcon("frequency.png")
@@ -34,7 +35,7 @@ std::function<std::unique_ptr<NitroNode>()> FFTOperator::creator(const QString &
                 ->withInputPort<GrayImageData>(INPUT_IMAGE)
                 ->withCheckBox(OPTION_INVERSE, false)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

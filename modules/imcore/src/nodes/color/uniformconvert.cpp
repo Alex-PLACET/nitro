@@ -19,9 +19,7 @@ void UniformConvertOperator::execute(NodePorts &nodePorts) {
     }
     const auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
     cv::Mat result;
-
     cv::cvtColor(inputImg, result, cv::COLOR_GRAY2RGB);
-
     const int mode = nodePorts.getOption(OPTION_INVERSE);
     if (mode == 0) {
         cvtColor(result, result, cv::COLOR_RGB2Lab);
@@ -47,9 +45,9 @@ void UniformConvertOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> UniformConvertOperator::creator(
-        const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters UniformConvertOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Convert Luminance", "perceptUniform", category);
         return builder.withOperator(std::make_unique<UniformConvertOperator>())
                 ->withIcon("gradient.png")
@@ -58,7 +56,7 @@ std::function<std::unique_ptr<NitroNode>()> UniformConvertOperator::creator(
                 ->withDropDown(OPTION_INVERSE, {"Gray -> L", "L -> Gray"})
                 ->withCheckBox(OPTION_ROUND, false)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

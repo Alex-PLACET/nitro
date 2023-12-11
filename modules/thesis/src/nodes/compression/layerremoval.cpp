@@ -263,9 +263,9 @@ void LayerRemovalOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    int k = nodePorts.inputInteger(INPUT_K);
-    auto img = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    int cumulative = nodePorts.getOption(OPTION_CUMULATIVE);
+    const int k = nodePorts.inputInteger(INPUT_K);
+    const auto img = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const int cumulative = nodePorts.getOption(OPTION_CUMULATIVE);
 
     cv::Mat byteImg;
     img->convertTo(byteImg, CV_8U, MAX_GRAY - 1);
@@ -279,7 +279,7 @@ void LayerRemovalOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> LayerRemovalOperator::creator(const QString &category) {
+CreatorWithoutParameters LayerRemovalOperator::creator(const QString &category) {
     return [category]() {
         NitroNodeBuilder builder("Layer Removal", "layerRemoval", category);
         return builder.withOperator(std::make_unique<LayerRemovalOperator>())

@@ -1,5 +1,6 @@
 #include "jpegoperator.hpp"
 
+#include <nitro/core/modules/nitromodule.hpp>
 #include <nitro/core/nodes/datatypes/decimaldata.hpp>
 #include <nitro/core/nodes/nitronodebuilder.hpp>
 #include <nitro/datatypes/grayimagedata.hpp>
@@ -27,21 +28,21 @@ void JpegOperator::execute(NodePorts &nodePorts) {
         return;
     }
     auto img = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    int jpeg_quality = nodePorts.inputInteger(INPUT_QUALITY);
+    const int jpeg_quality = nodePorts.inputInteger(INPUT_QUALITY);
 
     cv::Mat data;
     img.convertTo(data, CV_8U, 255);
 
     std::vector<uchar> jpeg_buffer;
-    std::vector<int> jpeg_params = {cv::IMWRITE_JPEG_QUALITY, jpeg_quality};
+    const std::vector<int> jpeg_params = {cv::IMWRITE_JPEG_QUALITY, jpeg_quality};
     cv::imencode(".jpg", data, jpeg_buffer, jpeg_params);
     unsigned long size = jpeg_buffer.size();
 
     cv::Mat result = cv::imdecode(jpeg_buffer, cv::IMREAD_GRAYSCALE);
     result.convertTo(result, CV_32F, 1.0 / 255.0);
 
-    double compressKb = size / 1000.0;
-    double originalKb = data.total() * data.elemSize() / 1000.0;
+    const double compressKb = size / 1000.0;
+    const double originalKb = data.total() * data.elemSize() / 1000.0;
 
     QString sizeString = QString("Input: %1 KB").arg(originalKb);
     QString compressSizeString = QString("Compressed: %1 KB").arg(compressKb);
@@ -58,8 +59,9 @@ void JpegOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> JpegOperator::creator(const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters JpegOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("JPEG  Compression", "jpeg", category);
         auto *valueLabel = new QLabel("-");
         auto *originalSizeLabel = new QLabel("-");
@@ -78,7 +80,7 @@ std::function<std::unique_ptr<NitroNode>()> JpegOperator::creator(const QString 
                 ->withOutputValue(OUTPUT_ORIG_SIZE)
                 ->withOutputValue(OUTPUT_COMP_SIZE)
                 ->withOutputValue(OUTPUT_RATIO)
-                ->build();
+                ->build(converters_register);
     };
 }
 

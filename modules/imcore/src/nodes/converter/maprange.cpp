@@ -27,16 +27,15 @@ void MapRangeOperator::execute(NodePorts &nodePorts) {
     if (nodePorts.inputOfType<DecimalData>(INPUT_IMAGE)) {
         double value = nodePorts.inputValue(INPUT_IMAGE);
         value = (value - fromMin) / (fromMax - fromMin);
-        value = toMin + value * (toMax - toMin);
+        value = std::lerp(toMin, toMax, value);
         if (nodePorts.optionEnabled(OPTION_CLAMP)) {
             value = std::clamp(value, toMin, toMax);
         }
         nodePorts.output<DecimalData>(OUTPUT_IMAGE, value);
         return;
     }
-    auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    cv::Mat result;
-    result = (*inputImg - fromMin) / (fromMax - fromMin);
+    const auto inputImg = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    cv::Mat result = (*inputImg - fromMin) / (fromMax - fromMin);
     result = toMin + result * (toMax - toMin);
 
     if (nodePorts.optionEnabled(OPTION_CLAMP)) {
@@ -56,25 +55,21 @@ void MapRangeOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> MapRangeOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MapRangeOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Map Range", "mapRange", category);
         return builder.withOperator(std::make_unique<MapRangeOperator>())
                 ->withIcon("map_range.png")
                 ->withNodeColor(NITRO_CONVERTER_COLOR)
-                ->withInputValue(INPUT_IMAGE,
-                                 0.5,
-                                 0,
-                                 1,
-                                 BoundMode::UNCHECKED,
-                                 {ColImageData::id(), GrayImageData::id()})
+                ->withInputValue(INPUT_IMAGE, 0.5, 0, 1, BoundMode::UNCHECKED)
                 ->withInputValue(INPUT_FROM_MIN, 0, 0, 1, BoundMode::UNCHECKED)
                 ->withInputValue(INPUT_FROM_MAX, 1, 0, 1, BoundMode::UNCHECKED)
                 ->withInputValue(INPUT_TO_MIN, 0, 0, 1, BoundMode::UNCHECKED)
                 ->withInputValue(INPUT_TO_MAX, 1, 0, 1, BoundMode::UNCHECKED)
                 ->withOutputValue(OUTPUT_IMAGE)
                 ->withCheckBox(OPTION_CLAMP, false)
-                ->build();
+                ->build(converters_register);
     };
 }
 

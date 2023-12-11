@@ -31,7 +31,7 @@ ImageViewer::ImageViewer(QGraphicsScene *imScene, QWidget *parent) : QGraphicsVi
 
     // Sets the scene rect to its maximum possible ranges to avoid auto scene range
     // re-calculation when expanding the all QGraphicsItems core rect.
-    int maxSize = 14960;
+    constexpr int maxSize = 14960;
     setSceneRect(-maxSize, -maxSize, (maxSize * 2), (maxSize * 2));
     setScene(imScene);
     resetImScale();
@@ -41,7 +41,6 @@ ImageViewer::ImageViewer(QGraphicsScene *imScene, QWidget *parent) : QGraphicsVi
 ImageViewer::~ImageViewer() = default;
 
 void ImageViewer::initActions() {
-
     resetAction_ = new QAction("Reset view", this);
     connect(resetAction_, &QAction::triggered, this, &ImageViewer::resetImScale);
 

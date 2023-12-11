@@ -1,5 +1,6 @@
 #include "zliboperator.hpp"
 
+#include <nitro/core/modules/nitromodule.hpp>
 #include <nitro/core/nodes/datatypes/decimaldata.hpp>
 #include <nitro/core/nodes/nitronodebuilder.hpp>
 #include <nitro/datatypes/grayimagedata.hpp>
@@ -148,8 +149,8 @@ void ZLibOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto img = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    int bits = nodePorts.inputInteger(INPUT_BITS);
+    const auto img = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const int bits = nodePorts.inputInteger(INPUT_BITS);
 
     cv::Mat data;
     std::vector<float> colTable;
@@ -157,15 +158,15 @@ void ZLibOperator::execute(NodePorts &nodePorts) {
 
     double start = cv::getTickCount();
 
-    auto packedData = packData(data, bits);
-    auto zlib_buffer = compressData(packedData);
+    const auto packedData = packData(data, bits);
+    const auto zlib_buffer = compressData(packedData);
 
     double end = cv::getTickCount();
     double elapsedTime = (end - start) / cv::getTickFrequency() * 1000.0;
     qDebug() << "Encodes" << elapsedTime;
     timeLabel_->setText(QString("Time: %1 msec").arg(elapsedTime));
 
-    unsigned long size = zlib_buffer.size();
+    const size_t size = zlib_buffer.size();
 
     start = cv::getTickCount();
     auto decompressedData = decompressData(zlib_buffer, static_cast<uLong>(packedData.size()));
@@ -203,8 +204,9 @@ void ZLibOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ZLibOperator::creator(const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters ZLibOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("zlib  Compression", "zlib", category);
         auto *valueLabel = new QLabel("-");
         auto *originalSizeLabel = new QLabel("-");
@@ -227,7 +229,7 @@ std::function<std::unique_ptr<NitroNode>()> ZLibOperator::creator(const QString 
                 ->withOutputValue(OUTPUT_ORIG_SIZE)
                 ->withOutputValue(OUTPUT_COMP_SIZE)
                 ->withOutputValue(OUTPUT_RATIO)
-                ->build();
+                ->build(converters_register);
     };
 }
 

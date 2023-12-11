@@ -19,10 +19,10 @@ bool fftShift(const cv::Mat &src, cv::Mat &dst) {
     const int qh = h / 2;
     const int qw = w / 2; // height and width of the quadrants
 
-    cv::Mat qTL(src, cv::Rect(0, 0, qw, qh));           // define the quadrants in respect to
-    cv::Mat qTR(src, cv::Rect(w - qw, 0, qw, qh));      // the outer dimensions of the matrix.
-    cv::Mat qBL(src, cv::Rect(0, h - qh, qw, qh));      // thus, with odd sizes, the center
-    cv::Mat qBR(src, cv::Rect(w - qw, h - qh, qw, qh)); // line(s) get(s) omitted.
+    const cv::Mat qTL(src, cv::Rect(0, 0, qw, qh));           // define the quadrants in respect to
+    const cv::Mat qTR(src, cv::Rect(w - qw, 0, qw, qh));      // the outer dimensions of the matrix.
+    const cv::Mat qBL(src, cv::Rect(0, h - qh, qw, qh));      // thus, with odd sizes, the center
+    const cv::Mat qBR(src, cv::Rect(w - qw, h - qh, qw, qh)); // line(s) get(s) omitted.
 
     cv::Mat tmp;
     hconcat(qBR, qBL, dst); // build destination matrix with switched
@@ -46,15 +46,16 @@ void FFTShiftOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> FFTShiftOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters FFTShiftOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Fourier Shift", "fftShift", category);
         return builder.withOperator(std::make_unique<FFTShiftOperator>())
                 ->withIcon("shift.png")
                 ->withNodeColor(NITRO_FILTER_COLOR)
                 ->withInputPort<GrayImageData>(INPUT_IMAGE)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

@@ -36,8 +36,7 @@ void SurfaceViewOperator::execute(NodePorts &nodePorts) {
     surfViewer_->updateBuffers(cvMatToQImage(*img, currentImg_));
 }
 
-std::function<std::unique_ptr<NitroNode>()> SurfaceViewOperator::creator(const QString &category,
-                                                                         MainWindow *window) {
+CreatorWithoutParameters SurfaceViewOperator::creator(const QString &category, MainWindow *window) {
     return [category, window]() {
         nitro::NitroNodeBuilder builder("3D Image Viewer", "ImageViewer3D", category);
         return builder.withOperator(std::make_unique<SurfaceViewOperator>(window))

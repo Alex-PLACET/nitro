@@ -43,16 +43,16 @@ void ImageViewOperator::execute(NodePorts &nodePorts) {
     nodePorts.setOutputData(INPUT_IMAGE, nodePorts.inGet(INPUT_IMAGE));
 }
 
-std::function<std::unique_ptr<NitroNode>()> ImageViewOperator::creator(const QString &category,
-                                                                       MainWindow *window) {
-    return [category, window]() {
+CreatorWithoutParameters ImageViewOperator::creator(const QString &category, MainWindow *window) {
+    return [category,
+            window](const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Image Viewer", "ImageViewer", category);
         return builder.withOperator(std::make_unique<ImageViewOperator>(window))
                 ->withIcon("viewer.png")
                 ->withNodeColor(NITRO_OUTPUT_COLOR)
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<ColImageData>(INPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

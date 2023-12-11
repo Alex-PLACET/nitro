@@ -33,9 +33,9 @@ void ConnectedCompsOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ConnectedCompsOperator::creator(
-        const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ConnectedCompsOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Connected Components", "connectedComps", category);
         return builder.withOperator(std::make_unique<ConnectedCompsOperator>())
                 ->withIcon("connected_comps.png")
@@ -44,7 +44,7 @@ std::function<std::unique_ptr<NitroNode>()> ConnectedCompsOperator::creator(
                 ->withInputPort<GrayImageData>(INPUT_IMAGE)
                 ->withDropDown(OPTION_INVERSE, {"4-connectivity", "8-connectivity"})
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

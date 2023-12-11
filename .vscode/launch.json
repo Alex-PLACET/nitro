@@ -13,7 +13,7 @@
             "stopAtEntry": false,
             "cwd": "${command:cmake.launchTargetDirectory}",
             "envFile": "${command:cmake.buildDirectory}/conan_run_env.env",
-            "console": "externalTerminal",
+            "console": "integratedTerminal",
         },
         {
             "name": "Conan install",

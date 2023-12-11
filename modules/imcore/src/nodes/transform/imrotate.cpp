@@ -34,12 +34,12 @@ void ImRotateOperator::execute(NodePorts &nodePorts) {
 
     cv::Mat result;
     cv::rotate(*im1, result, mode);
-
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ImRotateOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ImRotateOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Rotate", "rotate", category);
         return builder.withOperator(std::make_unique<ImRotateOperator>())
                 ->withIcon("rotate.png")
@@ -47,7 +47,7 @@ std::function<std::unique_ptr<NitroNode>()> ImRotateOperator::creator(const QStr
                 ->withDropDown(MODE_DROPDOWN, {"90 (CW)", "90 (CCw)", "180"})
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

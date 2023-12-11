@@ -1,7 +1,6 @@
 #include "imviewdockwidget.hpp"
 
 #include "imageviewer.hpp"
-#include "src/gui/histogram/histogramviewer.hpp"
 
 #include <QHBoxLayout>
 #include <QTabBar>
@@ -18,6 +17,7 @@ ImViewDockWidget::ImViewDockWidget(ImageViewer *imageViewer, MainWindow *window)
 
     initTitleBar(window);
 }
+
 void ImViewDockWidget::initTitleBar(const MainWindow *window) {
     setIcon(":/icons/image_viewer.png");
 

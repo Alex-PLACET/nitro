@@ -1,5 +1,8 @@
 #pragma once
 
+#include "QtNodes/internal/ConvertersRegister.hpp"
+
+#include <QtNodes/ConvertersRegister>
 #include <nitro/core/modules/nitromodule.hpp>
 #include <nitro/core/nodes/nitronodebuilder.hpp>
 #include <nitro/core/nodes/noderegistry.hpp>
@@ -22,7 +25,7 @@ public:
     /**
      * @brief Registers the data types for grayscale and color images.
      */
-    void registerDataTypes() override;
+    QtNodes::ConvertersRegister registerDataTypes() override;
 
     /**
      * @inherit

@@ -26,15 +26,15 @@ void PsnrOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-
     const auto imIn = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
     const auto imRef = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE_REF);
     const double psnr = 10.0 * log10(1.0 / mse(imIn, imRef));
     nodePorts.output<DecimalData>(OUTPUT_VALUE, psnr);
 }
 
-std::function<std::unique_ptr<NitroNode>()> PsnrOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters PsnrOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("PSNR", "psnr", category);
         return builder.withOperator(std::make_unique<PsnrOperator>())
                 ->withIcon("compare.png")
@@ -42,7 +42,7 @@ std::function<std::unique_ptr<NitroNode>()> PsnrOperator::creator(const QString 
                 ->withInputPort<GrayImageData>(INPUT_IMAGE)
                 ->withInputPort<GrayImageData>(INPUT_IMAGE_REF)
                 ->withOutputValue(OUTPUT_VALUE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

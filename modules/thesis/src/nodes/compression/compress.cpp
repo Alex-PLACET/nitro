@@ -25,12 +25,12 @@ void CompressOperator::execute(NodePorts &nodePorts) {
     }
 
     // Get the input data
-    auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    int bits = nodePorts.inputInteger(INPUT_BITS);
-    int levels = std::pow(2, bits);
-    float sizePortion = nodePorts.inputValue(INPUT_SIZE);
+    const auto inputImg = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const int bits = nodePorts.inputInteger(INPUT_BITS);
+    const int levels = std::pow(2, bits);
+    const float sizePortion = nodePorts.inputValue(INPUT_SIZE);
 
-    double start = cv::getTickCount();
+    const double start = cv::getTickCount();
 
     // Color space convert
     cv::Mat uniformIm;
@@ -51,8 +51,8 @@ void CompressOperator::execute(NodePorts &nodePorts) {
     cv::Mat residual;
     cv::Mat smallImg;
     if (sizePortion > 0) {
-        int smallWidth = sizePortion * uniformIm.cols + 0.5;
-        int smallHeight = sizePortion * uniformIm.rows + 0.5;
+        const int smallWidth = sizePortion * uniformIm.cols + 0.5;
+        const int smallHeight = sizePortion * uniformIm.rows + 0.5;
         cv::resize(uniformIm, smallImg, {smallWidth, smallHeight});
 
         if (nodePorts.optionEnabled(QUANTIZE_SMALL)) {
@@ -83,7 +83,7 @@ void CompressOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, residual);
 }
 
-std::function<std::unique_ptr<NitroNode>()> CompressOperator::creator(const QString &category) {
+CreatorWithoutParameters CompressOperator::creator(const QString &category) {
     return [category]() {
         auto *timeLabel = new QLabel("-");
         NitroNodeBuilder builder("Bit Compress", "bitCompress", category);

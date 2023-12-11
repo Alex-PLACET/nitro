@@ -3,6 +3,7 @@
 #include "nitro/datatypes/colimagedata.hpp"
 #include "nitro/datatypes/grayimagedata.hpp"
 
+#include <nitro/core/modules/nitromodule.hpp>
 #include <nitro/core/nodes/datatypes/decimaldata.hpp>
 #include <nitro/core/nodes/datatypes/integerdata.hpp>
 #include <nitro/core/nodes/nitronodebuilder.hpp>
@@ -36,7 +37,7 @@ static void match(const cv::Mat &src, cv::Mat &dest, const cv::Size &size, int n
 }
 
 // ensures the images all have the same size and number of channels
-void MixOperator::initUnifiedInputs(NodePorts &nodePorts) {
+void MixOperator::initUnifiedInputs(const NodePorts &nodePorts) {
     const auto fac = *nodePorts.inGetAs<GrayImageData>(INPUT_FAC);
     const auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
     const auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
@@ -100,24 +101,20 @@ void MixOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_VALUE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> MixOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MixOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Mix RGB", "mixRgb", category);
         return builder.withOperator(std::make_unique<MixOperator>())
                 ->withIcon("mix.png")
                 ->withNodeColor(NITRO_COLOR_COLOR)
                 ->withDropDown(MODE_DROPDOWN, {"Mix"})
-                ->withInputValue(INPUT_FAC,
-                                 1,
-                                 0,
-                                 1,
-                                 BoundMode::UPPER_LOWER,
-                                 {ColImageData::id(), GrayImageData::id()})
-                ->withInputPort<ColImageData>(INPUT_VALUE_1, {IntegerData::id(), DecimalData::id()})
-                ->withInputPort<ColImageData>(INPUT_VALUE_2, {IntegerData::id(), DecimalData::id()})
+                ->withInputValue(INPUT_FAC, 1, 0, 1, BoundMode::UPPER_LOWER)
+                ->withInputPort<ColImageData>(INPUT_VALUE_1)
+                ->withInputPort<ColImageData>(INPUT_VALUE_2)
                 ->withOutputValue(OUTPUT_VALUE)
                 ->withCheckBox(OPTION_CLAMP, false)
-                ->build();
+                ->build(converters_register);
     };
 }
 

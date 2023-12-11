@@ -11,8 +11,7 @@ namespace nitro::Thesis {
 class SurfaceViewOperator : public NodeOperator {
 
 public:
-    static std::function<std::unique_ptr<NitroNode>()> creator(const QString &category,
-                                                               MainWindow *window);
+    static CreatorWithoutParameters creator(const QString &category, MainWindow *window);
 
     explicit SurfaceViewOperator(MainWindow *window);
 

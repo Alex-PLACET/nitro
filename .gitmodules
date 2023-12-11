@@ -4,7 +4,7 @@
 
 [submodule "external/nodeeditor"]
 	path = external/nodeeditor
-	url = https://github.com/paceholder/nodeeditor.git
+	url = https://github.com/Alex-PLACET/nodeeditor.git
 
 [submodule "external/qt-value-slider"]
     path = external/qt-value-slider

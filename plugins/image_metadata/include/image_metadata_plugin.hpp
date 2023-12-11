@@ -12,7 +12,7 @@ public:
     /**
      * @inherit
      */
-    void registerDataTypes() override;
+    QtNodes::ConvertersRegister registerDataTypes() override;
 
     /**
      * @inherit

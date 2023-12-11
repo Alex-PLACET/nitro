@@ -1,8 +1,5 @@
 #include "nitro/modules/imcore.hpp"
 
-#include "nitro/core/modules/nitromodule.hpp"
-#include "nitro/datatypes/colimagedata.hpp"
-#include "nitro/datatypes/grayimagedata.hpp"
 #include "nodes/color/colormap.hpp"
 #include "nodes/color/colorspaceconvert.hpp"
 #include "nodes/color/immix.hpp"
@@ -18,17 +15,21 @@
 #include "nodes/converter/rgbtobw.hpp"
 #include "nodes/converter/separate.hpp"
 #include "nodes/input/imagesourceoperator.hpp"
+#include "nodes/input/inputPath.hpp"
 #include "nodes/input/randomoperator.hpp"
 #include "nodes/input/rgbinput.hpp"
-#include "nodes/output/imageviewoperator.hpp"
+#include "nodes/output/jsonviewoperator.hpp"
 #include "nodes/output/valueviewoperator.hpp"
 #include "nodes/transform/imtranslate.hpp"
 #include "nodes/transform/matchsize.hpp"
 #include "src/nodes/output/histogramviewoperator.hpp"
+#include "src/nodes/output/imageviewoperator.hpp"
+#include "src/nodes/output/jsonviewoperator.hpp"
 #include "src/nodes/transform/imflip.hpp"
 #include "src/nodes/transform/imresize.hpp"
 #include "src/nodes/transform/imrotate.hpp"
 
+#include <QtNodes/ConvertersRegister>
 #include <nitro/core/nodes/datatypes/decimaldata.hpp>
 #include <nitro/core/nodes/datatypes/integerdata.hpp>
 #include <nitro/core/nodes/noderegistry.hpp>
@@ -46,11 +47,11 @@ std::vector<CreatorVariant> ImCore::registerNodes() {
     return node_creators;
 }
 
-void ImCore::registerDataTypes() {
-    ColImageData::registerConversions();
-    GrayImageData::registerConversions();
-    DecimalData::registerConversions();
-    IntegerData::registerConversions();
+QtNodes::ConvertersRegister ImCore::registerDataTypes() {
+    QtNodes::ConvertersRegister converters_register;
+    // converters_register.merge(imcore::Get_ColImageData_conversions());
+    // converters_register.merge(imcore::Get_GrayImageData_conversions());
+    return converters_register;
 }
 
 void ImCore::registerConvertNodes(std::vector<CreatorVariant> &node_creators) {
@@ -90,22 +91,26 @@ void ImCore::registerInputNodes(std::vector<CreatorVariant> &node_creators) {
     // ------ Image Source Node ------
     node_creators.emplace_back(ImageSourceOperator::creator(category));
 
+    node_creators.emplace_back(InputPath::creator(category));
+
     // ------ Decimal Source Node ------
-    node_creators.emplace_back([category]() {
+    node_creators.emplace_back([category](const std::shared_ptr<const QtNodes::ConvertersRegister>
+                                                  &converters_register) {
         NitroNodeBuilder builder("Value", "ValueSource", category);
         return builder.withSourcedOutputValue("Value", 0, 0, 1, BoundMode::UNCHECKED)
                 ->withIcon("number.png")
                 ->withNodeColor(NITRO_INPUT_COLOR)
-                ->build();
+                ->build(converters_register);
     });
 
     // ------ Integer Source Node ------
-    node_creators.emplace_back([category]() {
+    node_creators.emplace_back([category](const std::shared_ptr<const QtNodes::ConvertersRegister>
+                                                  &converters_register) {
         NitroNodeBuilder builder("Integer", "IntegerSource", category);
         return builder.withSourcedOutputInteger("Integer", 128, 0, 255, BoundMode::UNCHECKED)
                 ->withIcon("number.png")
                 ->withNodeColor(NITRO_INPUT_COLOR)
-                ->build();
+                ->build(converters_register);
     });
     node_creators.emplace_back(RandomOperator::creator(category));
     node_creators.emplace_back(RgbOperator::creator(category));
@@ -119,6 +124,9 @@ void ImCore::registerOutputNodes(std::vector<CreatorVariant> &node_creators) {
     node_creators.emplace_back(ValueViewOperator::creator(category));
     node_creators.emplace_back([category](MainWindow *window) {
         return HistogramViewOperator::creator(category, window);
+    });
+    node_creators.emplace_back([category](MainWindow *window) {
+        return JsonViewOperator::creator(category, window);
     });
 }
 

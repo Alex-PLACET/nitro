@@ -26,8 +26,9 @@ void QuantizeOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> QuantizeOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters QuantizeOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Quantize", "quantization", category);
         return builder.withOperator(std::make_unique<QuantizeOperator>())
                 ->withIcon("quantize.png")
@@ -35,7 +36,7 @@ std::function<std::unique_ptr<NitroNode>()> QuantizeOperator::creator(const QStr
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withInputInteger(INPUT_K, 8, 2, 255)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

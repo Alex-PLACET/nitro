@@ -1,7 +1,9 @@
 #pragma once
 
+#include <nitro/core/modules/nitromodule.hpp>
 #include <nitro/core/nodes/nitronode.hpp>
 #include <nitro/core/nodes/nodeoperator.hpp>
+
 
 namespace nitro::Compression {
 
@@ -9,7 +11,7 @@ class JpegOperator : public NodeOperator {
 public:
     explicit JpegOperator(QLabel *valueLabel, QLabel *originalSizeLabel, QLabel *ratioLabel);
 
-    static std::function<std::unique_ptr<NitroNode>()> creator(const QString &category);
+    static CreatorWithoutParameters creator(const QString &category);
 
     void execute(NodePorts &nodePorts) override;
 

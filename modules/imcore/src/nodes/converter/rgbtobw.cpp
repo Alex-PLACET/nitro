@@ -25,16 +25,16 @@ void RgbToGrayscaleOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> RgbToGrayscaleOperator::creator(
-        const QString &category) {
-    return [category]() {
+CreatorWithoutParameters RgbToGrayscaleOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("RGB to Grayscale", "grayscaleConvert", category);
         return builder.withOperator(std::make_unique<RgbToGrayscaleOperator>())
                 ->withIcon("greyscale.png")
                 ->withNodeColor(NITRO_CONVERTER_COLOR)
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<GrayImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

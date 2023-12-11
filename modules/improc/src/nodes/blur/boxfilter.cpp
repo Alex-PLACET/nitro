@@ -43,8 +43,9 @@ void BoxFilterOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> BoxFilterOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters BoxFilterOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Box Filter", "boxFilter", category);
         return builder.withOperator(std::make_unique<BoxFilterOperator>())
                 ->withIcon("blur.png")
@@ -54,7 +55,7 @@ std::function<std::unique_ptr<NitroNode>()> BoxFilterOperator::creator(const QSt
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withInputInteger(INPUT_SIZE, 5, 1, 256)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

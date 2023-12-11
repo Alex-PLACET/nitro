@@ -93,11 +93,11 @@ void FlipOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_1);
-    auto im2 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_2);
-    double screenWidth = nodePorts.inputValue(INPUT_X);
-    int resX = nodePorts.inputInteger(INPUT_RES);
-    double dist = nodePorts.inputValue(INPUT_DIST);
+    const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_1);
+    const auto im2 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE_2);
+    const double screenWidth = nodePorts.inputValue(INPUT_X);
+    const int resX = nodePorts.inputInteger(INPUT_RES);
+    const double dist = nodePorts.inputValue(INPUT_DIST);
 
     FLIP::image<FLIP::color3> fImgA = cvGrayscaleMatToFlipImg(*im1);
     FLIP::image<FLIP::color3> fImgB = cvGrayscaleMatToFlipImg(*im2);
@@ -119,8 +119,9 @@ void FlipOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<DecimalData>(OUTPUT_AVG_ERROR, cv::mean(cvErrMap)[0]);
 }
 
-std::function<std::unique_ptr<NitroNode>()> FlipOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters FlipOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("NVIDIA FLIP", "nvidiaFlip", category);
         return builder.withOperator(std::make_unique<FlipOperator>())
                 ->withIcon("compare.png")
@@ -133,7 +134,7 @@ std::function<std::unique_ptr<NitroNode>()> FlipOperator::creator(const QString 
                 ->withOutputPort<ColImageData>(OUTPUT_RESULT)
                 ->withOutputPort<GrayImageData>(OUTPUT_ERROR_MAP)
                 ->withOutputPort<DecimalData>(OUTPUT_AVG_ERROR)
-                ->build();
+                ->build(converters_register);
     };
 }
 

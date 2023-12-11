@@ -22,7 +22,7 @@ void MorphologyOperator::execute(NodePorts &nodePorts) {
 
     cv::Mat kernel;
     im2->convertTo(kernel, CV_8UC1, 255);
-    int option = nodePorts.getOption(MODE_DROPDOWN);
+    const int option = nodePorts.getOption(MODE_DROPDOWN);
 
     cv::Mat result;
     switch (option) {
@@ -50,12 +50,12 @@ void MorphologyOperator::execute(NodePorts &nodePorts) {
     }
 
     result.convertTo(result, CV_32F);
-
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> MorphologyOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MorphologyOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Morphology", "morphology", category);
         return builder.withOperator(std::make_unique<MorphologyOperator>())
                 ->withIcon("morphology.png")
@@ -65,7 +65,7 @@ std::function<std::unique_ptr<NitroNode>()> MorphologyOperator::creator(const QS
                 ->withInputPort<ColImageData>(INPUT_IMAGE_1)
                 ->withInputPort<GrayImageData>(INPUT_IMAGE_2)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

@@ -29,15 +29,16 @@ void MseOperator::execute(NodePorts &nodePorts) {
     const auto imIn = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
     const auto imRef = *nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE_REF);
     cv::Mat imIn8bit;
-    cv::Mat imRef8bit;
     imIn.convertTo(imIn8bit, CV_8U, 255);
+    cv::Mat imRef8bit;
     imRef.convertTo(imRef8bit, CV_8U, 255);
 
     nodePorts.output<DecimalData>(OUTPUT_VALUE, mse(imIn8bit, imRef8bit));
 }
 
-std::function<std::unique_ptr<NitroNode>()> MseOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters MseOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("MSE", "mse", category);
         return builder.withOperator(std::make_unique<MseOperator>())
                 ->withIcon("compare.png")
@@ -45,7 +46,7 @@ std::function<std::unique_ptr<NitroNode>()> MseOperator::creator(const QString &
                 ->withInputPort<GrayImageData>(INPUT_IMAGE)
                 ->withInputPort<GrayImageData>(INPUT_IMAGE_REF)
                 ->withOutputValue(OUTPUT_VALUE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "nitro/core/nodes/nitronodebuilder.hpp"
-
 #include <QtNodes/NodeDelegateModelRegistry>
 #include <QtNodes/NodeInfo.hpp>
-
+#include <nitro/core/nodes/node_creator.hpp>
 
 namespace nitro {
 
@@ -24,7 +22,7 @@ public:
      * @param buildFunction A function that returns a pointer to a NitroNode.
      * The function should generate a new node with the desired functionality every time it is called.
      */
-    void registerNode(const std::function<std::unique_ptr<NitroNode>()> &buildFunction);
+    void registerNode(const CreatorWithoutParameters &buildFunction);
 
     /**
      * @brief Get all the node categories and the nodes within said category.

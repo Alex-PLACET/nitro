@@ -113,12 +113,12 @@ void ConvertOperator::getConversions(QStringList &colorNames,
     codes.push_back(cv::COLOR_Luv2RGB);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ConvertOperator::creator(const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters ConvertOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         QStringList colorNames;
         std::vector<cv::ColorConversionCodes> codes;
         getConversions(colorNames, codes);
-
         NitroNodeBuilder builder("Convert Color Space", "convert", category);
         return builder.withOperator(std::make_unique<ConvertOperator>(codes))
                 ->withIcon("color.png")
@@ -126,7 +126,7 @@ std::function<std::unique_ptr<NitroNode>()> ConvertOperator::creator(const QStri
                 ->withDropDown(MODE_DROPDOWN, colorNames)
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

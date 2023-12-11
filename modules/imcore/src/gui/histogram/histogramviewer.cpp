@@ -50,8 +50,8 @@ void HistogramView::addHistSeries(cv::Mat &singleChannelImg, const QColor &color
     QLineSeries *series = new QLineSeries();
     QLineSeries *bottomSeries = new QLineSeries();
     const float *histRow = normalizedHist.ptr<float>();
-    for (int i = 0; i < histSize; i++) {
-        float x = i * 1.0 / (histSize - 1);
+    for (size_t i = 0; i < histSize; i++) {
+        const float x = i * 1.0 / (histSize - 1);
         series->append(x, histRow[i]);
         bottomSeries->append(x, 0);
     }

@@ -43,8 +43,8 @@ void TranslateOperator::execute(NodePorts &nodePorts) {
     const auto im1 = nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
     const double offsetRatioX = nodePorts.inputValue(INPUT_X);
     const double offsetRatioY = nodePorts.inputValue(INPUT_Y);
-    const int offsetX = int(std::round(offsetRatioX * im1->cols));
-    const int offsetY = int(std::round(offsetRatioY * im1->rows));
+    const int offsetX = static_cast<int>(std::round(offsetRatioX * im1->cols));
+    const int offsetY = static_cast<int>(std::round(offsetRatioY * im1->rows));
     const int option = nodePorts.getOption(OPTION_PAD);
 
     cv::Mat result;
@@ -56,8 +56,9 @@ void TranslateOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> TranslateOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters TranslateOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Translate", "translate", category);
         return builder.withOperator(std::make_unique<TranslateOperator>())
                 ->withIcon("resize.png")
@@ -67,7 +68,7 @@ std::function<std::unique_ptr<NitroNode>()> TranslateOperator::creator(const QSt
                 ->withInputValue(INPUT_X, 0, -1, 1, BoundMode::UNCHECKED)
                 ->withInputValue(INPUT_Y, 0, -1, 1, BoundMode::UNCHECKED)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

@@ -67,20 +67,22 @@ void ImageSourceOperator::execute(NodePorts &nodePorts) {
                                         .scaled(size, size, Qt::KeepAspectRatio));
 }
 
-std::function<std::unique_ptr<NitroNode>()> ImageSourceOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters ImageSourceOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         auto *imgDisplayLabel = new QLabel();
         imgDisplayLabel->setAlignment(Qt::AlignCenter);
         imgDisplayLabel->setStyleSheet("border: 1px solid grey;");
         NitroNodeBuilder builder("Image Source", "ImageSource", category);
         return builder.withOperator(std::make_unique<ImageSourceOperator>(imgDisplayLabel))
                 ->withLoadButton(OUTPUT_IMAGE,
-                                 "Img Files (*.png *.jpg *.jpeg *.tiff *.tif *pgm *ppm)")
+                                 "Img Files (*.png *.jpg *.jpeg *.tiff *.tif *pgm *ppm)",
+                                 OUTPUT_IMAGE)
                 ->withDisplayWidget(DISPLAY_IMAGE, imgDisplayLabel)
                 ->withIcon("image_source.png")
                 ->withNodeColor(NITRO_IMAGE_COLOR)
                 ->withOutputPort<GrayImageData>(OUTPUT_ALPHA)
-                ->build();
+                ->build(converters_register);
     };
 }
 

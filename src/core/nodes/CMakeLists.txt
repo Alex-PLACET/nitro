@@ -11,9 +11,9 @@ target_include_directories(nodes
 
 target_link_libraries(nodes
     PUBLIC
-        Qt6::Gui
-        Qt6::Core
-        QtNodes
-        valueSliders
+    Qt6::Gui
+    Qt6::Core
+    QtNodes
+    valueSliders
     PRIVATE
-        util)
+    util)

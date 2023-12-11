@@ -26,15 +26,16 @@ void RandomOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<DecimalData>(OUTPUT_VAL, generateRandomDouble(seed));
 }
 
-std::function<std::unique_ptr<NitroNode>()> RandomOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters RandomOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Random", "random", category);
         return builder.withOperator(std::make_unique<RandomOperator>())
                 ->withIcon("number.png")
                 ->withNodeColor(NITRO_INPUT_COLOR)
                 ->withInputInteger(INPUT_SEED, 0, 0, 100, BoundMode::LOWER_ONLY)
                 ->withOutputValue(OUTPUT_VAL)
-                ->build();
+                ->build(converters_register);
     };
 }
 

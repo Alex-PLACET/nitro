@@ -1,5 +1,6 @@
 #pragma once
 
+#include "QtNodes/internal/ConvertersRegister.hpp"
 #include "nitro/core/modules/nitromodule.hpp"
 
 #include <nitro/core/nodes/nitronodebuilder.hpp>
@@ -27,9 +28,7 @@ public:
     /**
      * @inherit
      */
-    void registerDataTypes() override{
-            // there is no data type in this module
-    };
+    QtNodes::ConvertersRegister registerDataTypes() override { return {}; };
 
 private:
     void registerFilterNodes(std::vector<CreatorVariant> &node_creators) const;

@@ -31,9 +31,9 @@ void BilateralFilterOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> BilateralFilterOperator::creator(
-        const QString &category) {
-    return [category]() {
+CreatorWithoutParameters BilateralFilterOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Bilateral Filter", "bilateralFilter", category);
         return builder.withOperator(std::make_unique<BilateralFilterOperator>())
                 ->withIcon("blur.png")
@@ -43,7 +43,7 @@ std::function<std::unique_ptr<NitroNode>()> BilateralFilterOperator::creator(
                 ->withInputValue(INPUT_SIGMA_C, 75, 2, 255)
                 ->withInputValue(INPUT_SIGMA_S, 75, 2, 255)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

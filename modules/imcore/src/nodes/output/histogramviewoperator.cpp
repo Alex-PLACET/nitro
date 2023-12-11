@@ -34,22 +34,22 @@ void HistogramViewOperator::execute(NodePorts &nodePorts) {
         return;
     }
     auto im = *nodePorts.inGetAs<ColImageData>(INPUT_IMAGE);
-
     if (im.rows == 1 && im.cols == 1) {
         cv::resize(im, im, {256, 256});
     }
     histViewer_->updateChart(im);
 }
 
-std::function<std::unique_ptr<NitroNode>()> HistogramViewOperator::creator(const QString &category,
-                                                                           MainWindow *window) {
-    return [category, window]() {
+CreatorWithoutParameters HistogramViewOperator::creator(const QString &category,
+                                                        MainWindow *window) {
+    return [category,
+            window](const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Histogram", "HistogramViewer", category);
         return builder.withOperator(std::make_unique<HistogramViewOperator>(window))
                 ->withIcon("hist.png")
                 ->withNodeColor(NITRO_OUTPUT_COLOR)
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

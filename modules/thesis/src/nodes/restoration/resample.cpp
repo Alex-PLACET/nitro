@@ -65,15 +65,14 @@ static cv::Mat resample(const cv::Mat &img,
         const uchar *indexRow = img.ptr<uchar>(y);
         for (int x = 0; x < width; x++) {
             // Calculate p from the inverse linear interpolation
-            uchar idx = indexRow[x];
+            const uchar idx = indexRow[x];
 
-            double layer0Col = colTable[idx];
+            const double layer0Col = colTable[idx];
 
-            double p0 = df[idx].at<double>(y, x);
-            double p1 = df[idx + 1].at<double>(y, x);
+            const double p0 = df[idx].at<double>(y, x);
+            const double p1 = df[idx + 1].at<double>(y, x);
 
             double delta = (colTable[idx + 1] - layer0Col);
-
             double t = p0 / (p0 - p1);
             if (p0 == p1) {
                 t = 0;
@@ -81,9 +80,9 @@ static cv::Mat resample(const cv::Mat &img,
             if (t < 0) {
                 delta = layer0Col - colTable[idx - 1];
             }
-            double p = t * delta + layer0Col;
+            const double p = t * delta + layer0Col;
 
-            resRow[x] = float(p);
+            resRow[x] = static_cast<float>(p);
         }
     }
 
@@ -96,7 +95,7 @@ cv::Mat resampleImage(const cv::Mat &img, bool brightnessCorrect, double kSize) 
     cv::Mat indexed;
     toIndexed(img, indexed, colTable);
 
-    int numLevels = colTable.size();
+    const size_t numLevels = colTable.size();
     if (numLevels < 2) {
         return img;
     }
@@ -130,15 +129,14 @@ void ResampleOperator::execute(NodePorts &nodePorts) {
     if (!nodePorts.allInputsPresent()) {
         return;
     }
-    auto imIn = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
-    double kSize = nodePorts.inputValue(INPUT_K_SIZE);
-    bool correctLum = nodePorts.optionEnabled(OPTION_BRIGHTNESS_CORRECT);
-
-    cv::Mat result = resampleImage(*imIn, correctLum, kSize);
+    const auto imIn = nodePorts.inGetAs<GrayImageData>(INPUT_IMAGE);
+    const double kSize = nodePorts.inputValue(INPUT_K_SIZE);
+    const bool correctLum = nodePorts.optionEnabled(OPTION_BRIGHTNESS_CORRECT);
+    const cv::Mat result = resampleImage(*imIn, correctLum, kSize);
     nodePorts.output<GrayImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> ResampleOperator::creator(const QString &category) {
+CreatorWithoutParameters ResampleOperator::creator(const QString &category) {
     return [category]() {
         NitroNodeBuilder builder("Resample", "resample", category);
         return builder.withOperator(std::make_unique<ResampleOperator>())

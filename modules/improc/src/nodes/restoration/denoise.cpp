@@ -26,15 +26,16 @@ void DenoiseOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_IMAGE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> DenoiseOperator::creator(const QString &category) {
-    return [category]() {
+CreatorWithoutParameters DenoiseOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Denoise", "denoise", category);
         return builder.withOperator(std::make_unique<DenoiseOperator>())
                 ->withIcon("denoise.png")
                 ->withNodeColor(NITRO_RESTORATION_COLOR)
                 ->withInputPort<ColImageData>(INPUT_IMAGE)
                 ->withOutputPort<ColImageData>(OUTPUT_IMAGE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

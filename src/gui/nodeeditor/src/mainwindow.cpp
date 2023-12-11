@@ -33,12 +33,9 @@ void MainWindow::finalizeSetup(std::shared_ptr<NodeRegistry> &registry) {
     vertLayout_->addWidget(new NodeDockWidget(registry, this));
     setCentralWidget(vertLayout_);
     installEventFilter(this);
-
     setMenuBar(initMenuBar());
     setStatusBar(initFooter());
-
     setWindowState(Qt::WindowMaximized);
-
     finalized_ = true;
 }
 

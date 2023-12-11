@@ -16,10 +16,10 @@ QString ZoomBar::text() const {
 
 void ZoomBar::setZoom(int zoom) {
     curZoom_ = zoom;
-    double logValue = log10(curZoom_);
-    double logMin = log10(minZoom_);
-    double logMax = log10(maxZoom_);
-    double logPercent = (logValue - logMin) / (logMax - logMin);
+    const double logValue = log10(curZoom_);
+    const double logMin = log10(minZoom_);
+    const double logMax = log10(maxZoom_);
+    const double logPercent = (logValue - logMin) / (logMax - logMin);
     update();
 }
 

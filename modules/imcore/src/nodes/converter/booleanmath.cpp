@@ -30,11 +30,11 @@ double regularBoolMath(double a, double b, int option) {
         case 4:
             return a == b;
         case 5:
-            return int(std::round(a)) && int(std::round(b));
+            return static_cast<int>(std::round(a)) && static_cast<int>(std::round(b));
         case 6:
-            return int(std::round(a)) || int(std::round(b));
+            return static_cast<int>(std::round(a)) || static_cast<int>(std::round(b));
         case 7:
-            return int(std::round(a)) ^ int(std::round(b));
+            return static_cast<int>(std::round(a)) ^ static_cast<int>(std::round(b));
         default:
             return a / 2.0 + b / 2.0;
     }
@@ -61,7 +61,6 @@ static void match(const cv::Mat &src, cv::Mat &dest, const cv::Size &size, int n
 void BooleanMathOperator::initUnifiedInputs(NodePorts &nodePorts) {
     const auto in1 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_1);
     const auto in2 = *nodePorts.inGetAs<ColImageData>(INPUT_VALUE_2);
-
     const int numChannels = std::max(in1.channels(), in2.channels());
     cv::Size size;
     if (in1.cols * in1.rows > in2.cols * in2.rows) {
@@ -131,27 +130,18 @@ void BooleanMathOperator::execute(NodePorts &nodePorts) {
     nodePorts.output<ColImageData>(OUTPUT_VALUE, result);
 }
 
-std::function<std::unique_ptr<NitroNode>()> BooleanMathOperator::creator(const QString &category) {
-    return [category]() {
+nitro::CreatorWithoutParameters BooleanMathOperator::creator(const QString &category) {
+    return [category](
+                   const std::shared_ptr<const QtNodes::ConvertersRegister> &converters_register) {
         NitroNodeBuilder builder("Boolean Math", "booleanMath", category);
         return builder.withOperator(std::make_unique<BooleanMathOperator>())
                 ->withIcon("bool_math.png")
                 ->withNodeColor(NITRO_CONVERTER_COLOR)
                 ->withDropDown(MODE_DROPDOWN, {"<", "<=", ">", ">=", "==", "AND", "OR", "XOR"})
-                ->withInputValue(INPUT_VALUE_1,
-                                 0.5,
-                                 0,
-                                 1,
-                                 BoundMode::UNCHECKED,
-                                 {ColImageData::id(), GrayImageData::id()})
-                ->withInputValue(INPUT_VALUE_2,
-                                 0.5,
-                                 0,
-                                 1,
-                                 BoundMode::UNCHECKED,
-                                 {ColImageData::id(), GrayImageData::id()})
+                ->withInputValue(INPUT_VALUE_1, 0.5, 0, 1, BoundMode::UNCHECKED)
+                ->withInputValue(INPUT_VALUE_2, 0.5, 0, 1, BoundMode::UNCHECKED)
                 ->withOutputValue(OUTPUT_VALUE)
-                ->build();
+                ->build(converters_register);
     };
 }
 

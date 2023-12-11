@@ -1,12 +1,15 @@
 #pragma once
 
-#include "nitro/core/nodes/datatypes/flexibledata.hpp"
+#include "QtNodes/internal/ConvertersRegister.hpp"
 #include "nitro/core/nodes/portdata.hpp"
 
 #include <QString>
+#include <QtNodes/ConvertersRegister>
 #include <QtNodes/Definitions>
+#include <any>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -31,6 +34,15 @@ public:
      */
     NodePorts();
 
+    NodePorts(const NodePorts &other)
+        : inputList_(other.inputList_),
+          outputList_(other.outputList_),
+          inputMap_(other.inputMap_),
+          outputMap_(other.outputMap_),
+          origInTypes_(other.origInTypes_),
+          options_(other.options_),
+          converter_register_(other.converter_register_) {}
+
     /**
      * @brief Creates a new collection of ports with the desired input data, output data and options.
      * @param inputList Ordered list of ports that should function as the input ports of the node in question.
@@ -39,7 +51,8 @@ public:
      */
     NodePorts(std::vector<PortData> inputList,
               std::vector<PortData> outputList,
-              std::unordered_map<QString, int> options);
+              std::unordered_map<QString, int> options,
+              const std::shared_ptr<const QtNodes::ConvertersRegister> &converter_register_);
 
     /**
      * @brief Destructor.
@@ -78,13 +91,13 @@ public:
      * @brief Retrieves the number of input ports.
      * @return The number of input ports.
      */
-    [[nodiscard]] size_t numInPorts() const;
+    [[nodiscard]] size_t numInPorts() const noexcept;
 
     /**
      * @brief Retrieves the number of output ports.
      * @return The number of output ports.
      */
-    [[nodiscard]] size_t numOutPorts() const;
+    [[nodiscard]] size_t numOutPorts() const noexcept;
 
     /**
      * @brief Retrieves a pointer to the data of the output port at the provided index.
@@ -136,7 +149,7 @@ public:
      * @return The generic node data located at the input port with name "name".
      */
     [[nodiscard]] const std::shared_ptr<QtNodes::NodeData> &inGet(const QString &name) const {
-        if (inputMap_.count(name) == 0) {
+        if (!inputMap_.contains(name)) {
             throw std::invalid_argument(
                     QString("Input port with name: %1 does not exist.").arg(name).toStdString());
         }
@@ -154,11 +167,34 @@ public:
      */
     template<typename T>
     [[nodiscard]] typename T::DataType inGetAs(const QString &name) const {
-        if (inputMap_.count(name) == 0) {
+        if (!inputMap_.contains(name)) {
             throw std::invalid_argument(
                     QString("Input port with name: %1 does not exist.").arg(name).toStdString());
         }
-        return T::from(inputMap_.at(name).getData());
+        const std::shared_ptr<QtNodes::NodeData> &node_data_ptr = inputMap_.at(name).getData();
+
+        if (node_data_ptr == nullptr) {
+            throw std::invalid_argument(QString("Input port with name: %1 does not contain data.")
+                                                .arg(name)
+                                                .toStdString());
+        }
+
+        if (node_data_ptr->type().id == T::id()) {
+            return std::static_pointer_cast<T>(node_data_ptr)->data();
+        }
+
+        try {
+            const QtNodes::ConverterFunction &converter_function = converter_register_->at(
+                    {node_data_ptr->type().id, T::id()});
+            const auto any_converted = converter_function(std::any(node_data_ptr));
+            return std::any_cast<T>(any_converted).data();
+        } catch (const std::out_of_range &e) {
+            throw std::invalid_argument(
+                    QString("Input port with name: %1 does not contain data of type: %2.")
+                            .arg(name)
+                            .arg(T::id())
+                            .toStdString());
+        }
     }
 
     /**
@@ -179,12 +215,9 @@ public:
      */
     template<class T>
     [[nodiscard]] bool allInputOfType() const {
-        for (const auto &[key, value]: inputMap_) {
-            if (std::dynamic_pointer_cast<T>(value.data_) == nullptr) {
-                return false;
-            }
-        }
-        return true;
+        return std::ranges::none_of(inputMap_, [](const auto &pair) {
+            return std::dynamic_pointer_cast<T>(pair.second.data_) == nullptr;
+        });
     }
 
     /**
@@ -213,14 +246,14 @@ public:
      * @param optionName Name of the option.
      * @return The integer option.
      */
-    int getOption(const QString &optionName);
+    int getOption(const QString &optionName) const;
 
     /**
      * @brief Checks whether the option with the provided name is enabled.
      * @param optionName Name of the option.
      * @return True if the option is enabled. False otherwise.
      */
-    bool optionEnabled(const QString &optionName);
+    bool optionEnabled(const QString &optionName) const;
 
     /**
      * @brief Sets the value of an option.
@@ -254,7 +287,7 @@ public:
      * @param key The key of the property to retrieve.
      * @return The property associated with the key. Returns "" if the key does not exist.
      */
-    QString getGlobalProperty(const QString &key);
+    QString getGlobalProperty(const QString &key) const;
 
 private:
     std::vector<QString> inputList_;
@@ -265,6 +298,7 @@ private:
 
     std::unordered_map<QString, QString> properties_;
     std::unordered_map<QString, int> options_; // used for dropdowns and other options
+    std::shared_ptr<const QtNodes::ConvertersRegister> converter_register_;
 };
 
 } // namespace nitro

@@ -9,7 +9,7 @@ class DecompressOperator : public NodeOperator {
 public:
     explicit DecompressOperator(QLabel *timeLabel);
 
-    static std::function<std::unique_ptr<NitroNode>()> creator(const QString &category);
+    static CreatorWithoutParameters creator(const QString &category);
 
     void execute(NodePorts &nodePorts) override;
 
